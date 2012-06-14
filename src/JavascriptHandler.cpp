@@ -9,7 +9,7 @@
 **
 ****************************************************************************/
 
-#include <QWebFrame>
+//#include <QWebFrame>
 #include <QString>
 #include "phone/Account.h"
 #include "phone/Call.h"
@@ -25,8 +25,8 @@ using phone::Account;
 const QString JavascriptHandler::OBJECT_NAME = "qt_handler";
 
 //-----------------------------------------------------------------------------
-JavascriptHandler::JavascriptHandler(QWebView *web_view, Phone &phone) :
-    web_view_(web_view), phone_(phone), js_callback_handler_("")
+JavascriptHandler::JavascriptHandler(/*QWebView *web_view, */Phone &phone) :
+    /*web_view_(web_view),*/ phone_(phone), js_callback_handler_("")
 {
 }
 
@@ -83,10 +83,10 @@ void JavascriptHandler::microphoneLevel(int level) const
 //-----------------------------------------------------------------------------
 QVariant JavascriptHandler::evaluateJavaScript(const QString &code) const
 {
-    if (js_callback_handler_.isEmpty()) {
-        return web_view_->page()->mainFrame()->evaluateJavaScript(code);
-    }
-    return web_view_->page()->mainFrame()->evaluateJavaScript(js_callback_handler_ + "." + code);
+//    if (js_callback_handler_.isEmpty()) {
+//        return web_view_->page()->mainFrame()->evaluateJavaScript(code);
+//    }
+//    return web_view_->page()->mainFrame()->evaluateJavaScript(js_callback_handler_ + "." + code);
 }
 
 //-----------------------------------------------------------------------------

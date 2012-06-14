@@ -14,9 +14,9 @@
 #include "Sound.h"
 
 //-----------------------------------------------------------------------------
-Sound::Sound() : ring_(0), dial_(0)
+Sound::Sound() //: ring_(0), dial_(0)
 {
-    Config &config = Config::getInstance();
+/*    Config &config = Config::getInstance();
 
     if (QFile::exists(config.getSoundRingfile())) {
         ring_ = new QSound(config.getSoundRingfile());
@@ -25,46 +25,46 @@ Sound::Sound() : ring_(0), dial_(0)
     if (QFile::exists(config.getSoundDialfile())) {
         dial_ = new QSound(config.getSoundDialfile());
         dial_->setLoops(-1);
-    }
+    }*/
 }
 
 //-----------------------------------------------------------------------------
 Sound::~Sound()
 {
-    delete ring_;
-    delete dial_;
+//    delete ring_;
+//    delete dial_;
 }
 
 //-----------------------------------------------------------------------------
 Sound &Sound::getInstance()
 {
-    static Sound instance;
-    return instance;
+//    static Sound instance;
+//    return instance;
 }
 
 //-----------------------------------------------------------------------------
 void Sound::startRing()
 {
-    if (ring_) {
-        ring_->play();
-    }
+//    if (ring_) {
+//        ring_->play();
+//    }
 }
 
 //-----------------------------------------------------------------------------
 void Sound::startDial()
 {
-    if (dial_) {
-        dial_->play();
-    }
+//    if (dial_) {
+//        dial_->play();
+//    }
 }
 
 //-----------------------------------------------------------------------------
 void Sound::stop()
 {
-    if (ring_) {
-        ring_->stop();
-    }
-    if (dial_) {
-        dial_->stop();
-    }
+//    if (ring_) {
+//        ring_->stop();
+//    }
+//    if (dial_) {
+//        dial_->stop();
+//    }
 }

@@ -4,7 +4,8 @@
 
 TEMPLATE = lib
 TARGET = GreenJ
-QT += core gui webkit network
+#QT += core gui webkit network
+QT = core
 win32 {
 	DESTDIR = ../bin/win32
 	LIBDIR = ../lib/win32
@@ -135,10 +136,8 @@ HEADERS += $$SOURCEDIR/phone/api/Interface.h \
     $$SOURCEDIR/phone/Call.h \
     $$SOURCEDIR/phone/Phone.h \
     $$SOURCEDIR/Config.h \
-    $$SOURCEDIR/Gui.h \
     $$SOURCEDIR/JavascriptHandler.h \
     $$SOURCEDIR/LogHandler.h \ 
-    $$SOURCEDIR/PrintHandler.h \
     $$SOURCEDIR/Sound.h \
     $$SOURCEDIR/WebPage.h
 #SOURCES += $$SOURCEDIR/main.cpp \
@@ -147,10 +146,8 @@ SOURCES += $$SOURCEDIR/phone/api/Sip.cpp \
     $$SOURCEDIR/phone/Call.cpp \
     $$SOURCEDIR/phone/Phone.cpp \
     $$SOURCEDIR/Config.cpp \
-    $$SOURCEDIR/Gui.cpp \
     $$SOURCEDIR/JavascriptHandler.cpp \
     $$SOURCEDIR/LogHandler.cpp \
-    $$SOURCEDIR/PrintHandler.cpp \
     $$SOURCEDIR/Sound.cpp
 FORMS += $$SOURCEDIR/gui.ui
 RESOURCES += $$RESOURCEDIR/gui.qrc

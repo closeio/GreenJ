@@ -14,9 +14,10 @@
 
 #include <QObject>
 #include <QString>
+#include <QStringList>
 #include <QVariant>
 #include <QUrl>
-#include <QWebView>
+//#include <QWebView>
 
 class LogInfo;
 
@@ -40,7 +41,7 @@ public:
      * @param web_view WebView needed to call the JS functions
      * @param phone To access the phone methods
      */
-    JavascriptHandler(QWebView *web_view, phone::Phone &phone);
+    JavascriptHandler(/*QWebView *web_view, */phone::Phone &phone);
 
     /**
      * Send current account state
@@ -299,7 +300,7 @@ private slots:
     void slotLogMessage(const LogInfo &info) const;
 
 private:
-    QWebView *web_view_;
+//    QWebView *web_view_;
     phone::Phone &phone_;
 
     QString js_callback_handler_;

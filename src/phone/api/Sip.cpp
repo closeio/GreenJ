@@ -9,10 +9,28 @@
 **
 ****************************************************************************/
 
-#include <QTextDocument>
 #include "../../LogHandler.h"
 #include "../Phone.h"
 #include "Sip.h"
+
+// From QTextDocument
+QString escape(const QString& plain)
+{
+    QString rich;
+    rich.reserve(int(plain.length() * 1.1));
+    for (int i = 0; i < plain.length(); ++i) {
+        if (plain.at(i) == QLatin1Char('<'))
+            rich += QLatin1String("&lt;");
+        else if (plain.at(i) == QLatin1Char('>'))
+            rich += QLatin1String("&gt;");
+        else if (plain.at(i) == QLatin1Char('&'))
+            rich += QLatin1String("&amp;");
+        else
+            rich += plain.at(i);
+    }
+    return rich;
+}
+
 
 namespace phone
 {
@@ -225,9 +243,9 @@ void Sip::getAccountInfo(QVariantMap &account_info)
     pjsua_acc_info ai;
     pjsua_acc_get_info(account_id_, &ai);
 
-    account_info.insert("address", Qt::escape(ai.acc_uri.ptr));
-    account_info.insert("status", Qt::escape(ai.status_text.ptr));
-    account_info.insert("online_status", Qt::escape(ai.online_status_text.ptr));
+    account_info.insert("address", escape(ai.acc_uri.ptr));
+    account_info.insert("status", escape(ai.status_text.ptr));
+    account_info.insert("online_status", escape(ai.online_status_text.ptr));
 }
 
 //-----------------------------------------------------------------------------
@@ -438,11 +456,11 @@ void Sip::getCallInfo(const int call_id, QVariantMap &call_info)
     pjsua_call_info ci;
     pjsua_call_get_info(call_id, &ci);
 
-    call_info.insert("address", Qt::escape(ci.remote_contact.ptr));
-    call_info.insert("number", Qt::escape(ci.remote_info.ptr));
-    call_info.insert("stateText", Qt::escape(ci.state_text.ptr));
+    call_info.insert("address", escape(ci.remote_contact.ptr));
+    call_info.insert("number", escape(ci.remote_info.ptr));
+    call_info.insert("stateText", escape(ci.state_text.ptr));
     call_info.insert("state", (int)ci.state);
-    call_info.insert("lastStatus", Qt::escape(ci.last_status_text.ptr));
+    call_info.insert("lastStatus", escape(ci.last_status_text.ptr));
     call_info.insert("duration", (int)ci.connect_duration.sec);
 }
 

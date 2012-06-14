@@ -12,7 +12,7 @@
 #ifndef SOUND_INCLUDE_H
 #define SOUND_INCLUDE_H
 
-#include <QSound>
+//#include <QSound>
 
 /**
  * Singleton that handles sounds
@@ -42,8 +42,8 @@ public:
     void stop();
 
 private:
-    QSound *ring_;
-    QSound *dial_;
+//    QSound *ring_;
+//    QSound *dial_;
 
     Sound();
     Sound(const Sound &original);
