@@ -2,14 +2,14 @@
 # Qt Project file
 # ----------------
 
-TEMPLATE = app
+TEMPLATE = lib
 TARGET = GreenJ
 QT += core gui webkit network
 win32 {
 	DESTDIR = ../bin/win32
 	LIBDIR = ../lib/win32
 	BUILDDIR = ../build/win32
-	QT += qtmain phonon
+	QT += phonon
 	PJSIP_DIR = ../lib/win32/pjsip
 	PJSIP_TARGET = i386-Win32-vc8-Release
 }
@@ -35,6 +35,7 @@ RESOURCEDIR = ../res
 
 #CONFIG += debug
 CONFIG += ordered
+#CONFIG += static
 
 #DEFINES += QT_LARGEFILE_SUPPORT
 DEFINES += DEBUG
@@ -140,8 +141,8 @@ HEADERS += $$SOURCEDIR/phone/api/Interface.h \
     $$SOURCEDIR/PrintHandler.h \
     $$SOURCEDIR/Sound.h \
     $$SOURCEDIR/WebPage.h
-SOURCES += $$SOURCEDIR/main.cpp \
-    $$SOURCEDIR/phone/api/Sip.cpp \
+#SOURCES += $$SOURCEDIR/main.cpp \
+SOURCES += $$SOURCEDIR/phone/api/Sip.cpp \
     $$SOURCEDIR/phone/Account.cpp \
     $$SOURCEDIR/phone/Call.cpp \
     $$SOURCEDIR/phone/Phone.cpp \
