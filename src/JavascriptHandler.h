@@ -299,7 +299,7 @@ private slots:
      */
     void slotLogMessage(const LogInfo &info) const;
 
-private:
+protected:
 //    QWebView *web_view_;
     phone::Phone &phone_;
 
