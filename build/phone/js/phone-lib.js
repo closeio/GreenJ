@@ -605,7 +605,7 @@ li.Phone.prototype = {
      * @return list of objects with device information
      */
     getSoundDevices: function() {
-        this.getQtHandler().getSoundDevices();
+        return this.getQtHandler().getSoundDevices();
     },
 
     /**
