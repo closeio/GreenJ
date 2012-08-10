@@ -18,3 +18,4 @@ lib/linux/*
 lib/win32/*
 lib/mac/*
 build/Makefile
+.DS_Store
