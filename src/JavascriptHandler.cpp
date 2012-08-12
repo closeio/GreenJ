@@ -81,13 +81,13 @@ void JavascriptHandler::microphoneLevel(int level) const
 }
 
 //-----------------------------------------------------------------------------
-QVariant JavascriptHandler::evaluateJavaScript(const QString &code) const
-{
+//QVariant JavascriptHandler::evaluateJavaScript(const QString &code) const
+//{
 //    if (js_callback_handler_.isEmpty()) {
 //        return web_view_->page()->mainFrame()->evaluateJavaScript(code);
 //    }
 //    return web_view_->page()->mainFrame()->evaluateJavaScript(js_callback_handler_ + "." + code);
-}
+//}
 
 //-----------------------------------------------------------------------------
 // Public slots
