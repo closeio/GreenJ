@@ -345,7 +345,7 @@ protected:
      * @param code JavaScript code
      * @return The return value from JavaScript
      */
-    QVariant evaluateJavaScript(const QString &code) const;
+    virtual QVariant evaluateJavaScript(const QString &code) const;
 };
 
 #endif // JAVASCRIPTHANDLER_INCLUDE_H
