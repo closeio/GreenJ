@@ -419,7 +419,10 @@ if (typeof window.console.log === 'undefined') {
                             this._renderLog(cloneOptions.logTo, output);
                         }
                         if (cloneOptions.render) { this._render(code, msg, output, cloneOptions); }
-                        if (cloneOptions.throwException) { throw code; }
+                        if (cloneOptions.throwException) {
+                            if (cloneOptions.exception) { throw cloneOptions.exception; }
+                            else { throw code; }
+                        }
                     }
                 }
                 return code;
