@@ -12,59 +12,92 @@
 #include <QFile>
 #include "Config.h"
 #include "Sound.h"
+#include "LogHandler.h"
+
 
 //-----------------------------------------------------------------------------
-Sound::Sound() //: ring_(0), dial_(0)
+Sound::Sound()
 {
-/*    Config &config = Config::getInstance();
-
-    if (QFile::exists(config.getSoundRingfile())) {
-        ring_ = new QSound(config.getSoundRingfile());
-        ring_->setLoops(-1);
-    }
-    if (QFile::exists(config.getSoundDialfile())) {
-        dial_ = new QSound(config.getSoundDialfile());
-        dial_->setLoops(-1);
-    }*/
+    pool_ = pjsua_pool_create("wav", 512, 512);
 }
 
 //-----------------------------------------------------------------------------
 Sound::~Sound()
 {
-//    delete ring_;
-//    delete dial_;
+    stop();
+    if (pool_)
+        pj_pool_release(pool_);
 }
 
 //-----------------------------------------------------------------------------
 Sound &Sound::getInstance()
 {
-//    static Sound instance;
-//    return instance;
+    static Sound instance;
+    return instance;
 }
 
 //-----------------------------------------------------------------------------
 void Sound::startRing()
 {
-//    if (ring_) {
-//        ring_->play();
-//    }
+    pj_status_t status;
+
+    if (pool_ && ringFilename.length()) {
+        status = pjmedia_wav_player_port_create(pool_, /* memory pool */
+                                                ringFilename.toUtf8().data(), /* file to play */
+                                                20, /* ptime. */
+                                                0, /* flags */
+                                                0, /* default buffer */
+                                                &file_port_ /* returned port */
+                                                );
+        
+        if (status != PJ_SUCCESS) {
+            LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "pjsip", status, "Error in pjmedia_wav_player_port_create"));
+            return;
+        }
+        status = pjmedia_snd_port_create_player(pool_, /* pool */
+                                                device_, /* use default dev. */
+                                                file_port_->info.clock_rate,/* clock rate. */
+                                                file_port_->info.channel_count,/* # of channels. */
+                                                file_port_->info.samples_per_frame, /* samples per frame. */
+                                                file_port_->info.bits_per_sample,/* bits per sample. */
+                                                0, /* options */
+                                                &snd_port_ /* returned port */
+                                                );
+        if (status != PJ_SUCCESS) {
+            LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "pjsip", status, "Failed to create player"));
+            return;
+        }
+        
+        
+        status = pjmedia_snd_port_connect(snd_port_, file_port_);
+        if (status != PJ_SUCCESS) {
+            LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "pjsip", status, "Failed to play"));
+            return;
+        }
+    }
 }
 
 //-----------------------------------------------------------------------------
 void Sound::startDial()
 {
-//    if (dial_) {
-//        dial_->play();
-//    }
+}
+
+//-----------------------------------------------------------------------------
+void Sound::setSoundDevice(const int device)
+{
+    device_ = device;
 }
 
 //-----------------------------------------------------------------------------
 void Sound::stop()
 {
-//    if (ring_) {
-//        ring_->stop();
-//    }
-//    if (dial_) {
-//        dial_->stop();
-//    }
+    if (snd_port_) {
+        pjmedia_snd_port_disconnect(snd_port_);
+        pjmedia_snd_port_destroy(snd_port_);
+        snd_port_ = NULL;
+    }
+    if (file_port_) {
+        pjmedia_port_destroy(file_port_);
+        file_port_ = NULL;
+    }
 }

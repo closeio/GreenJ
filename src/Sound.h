@@ -12,7 +12,12 @@
 #ifndef SOUND_INCLUDE_H
 #define SOUND_INCLUDE_H
 
-//#include <QSound>
+#include <pjmedia.h>
+#include <pjlib-util.h>
+#include <pjlib.h>
+#include <pjsua.h>
+
+#include <QString>
 
 /**
  * Singleton that handles sounds
@@ -40,13 +45,18 @@ public:
      * Stop sounds
      */
     void stop();
-
+    
+    void setSoundDevice(const int device);
+    
+    QString ringFilename;
+    
 private:
-//    QSound *ring_;
-//    QSound *dial_;
+    int device_;
+    pj_pool_t *pool_;
+    pjmedia_port *file_port_;
+    pjmedia_snd_port *snd_port_;
 
     Sound();
-    Sound(const Sound &original);
     ~Sound();
 };
 

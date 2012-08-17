@@ -16,6 +16,7 @@
 #include "phone/Phone.h"
 #include "LogHandler.h"
 #include "Config.h"
+#include "Sound.h"
 #include "JavascriptHandler.h"
 #include "json.h"
 
@@ -402,6 +403,13 @@ QVariantMap JavascriptHandler::getCodecPriorities() const
 void JavascriptHandler::setSoundDevice(const int input, const int output) const
 {
     phone_.setSoundDevice(input, output);
+}
+
+//-----------------------------------------------------------------------------
+void JavascriptHandler::setSoundDevice(const int input, const int output, const int ring) const
+{
+    phone_.setSoundDevice(input, output);
+    Sound::getInstance().setSoundDevice(ring);
 }
 
 //-----------------------------------------------------------------------------
