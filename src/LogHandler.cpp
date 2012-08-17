@@ -16,10 +16,10 @@
 #include "LogHandler.h"
 
 //-----------------------------------------------------------------------------
-LogHandler::LogHandler() : 
+LogHandler::LogHandler() :
     file_("log-" + QDateTime::currentDateTime().toString("MM-yyyy") + ".log")
 {
-    level_ = Config::getInstance().getApplicationLogLevel();
+    level_ = 0; // Config::getInstance().getApplicationLogLevel();
 
     QDir current(".");
     QStringList filters;
@@ -52,7 +52,7 @@ LogHandler &LogHandler::getInstance()
 void LogHandler::setLevel(const uint level)
 {
     level_ = level;
-    Config::getInstance().setLogLevel(level);
+//    Config::getInstance().setLogLevel(level);
 }
 
 //-----------------------------------------------------------------------------
@@ -105,7 +105,7 @@ void LogHandler::log(const LogInfo &info, bool signal)
 //-----------------------------------------------------------------------------
 void LogHandler::writeFile(const QString &msg)
 {
-    lock_.lockForWrite();
+    /*lock_.lockForWrite();
 
     if (file_.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
         QTextStream out(&file_);
@@ -114,7 +114,7 @@ void LogHandler::writeFile(const QString &msg)
         file_.close();
     }
 
-    lock_.unlock();
+    lock_.unlock();*/
 }
 
 //-----------------------------------------------------------------------------

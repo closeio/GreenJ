@@ -48,13 +48,13 @@ Phone::Phone(api::Interface *api) : api_(api), js_handler_(NULL)
 //-----------------------------------------------------------------------------
 Phone::~Phone()
 {
-    QFile file(ERROR_FILE);
-    file.open(QIODevice::WriteOnly | QIODevice::Append);
-    QDataStream out(&file);
+//    QFile file(ERROR_FILE);
+//    file.open(QIODevice::WriteOnly | QIODevice::Append);
+//    QDataStream out(&file);
     for (int i = 0; i < calls_.size(); i++) {
         Call *call = calls_[i];
         if (call && call->isActive()) {
-            out << *call;
+//            out << *call;
         }
         delete call;
     }
