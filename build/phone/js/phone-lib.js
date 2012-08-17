@@ -670,6 +670,16 @@ li.Phone.prototype = {
     },
 
     /**
+     * Select or change sound device
+     * @param input Device ID of the capture device.
+     * @param output Device ID of the playback device.
+     * @param ring Device ID of the ringtone device.
+     */
+    setSoundDevice: function(input, output, ring) {
+        this.getQtHandler().setSoundDevice(input, output, ring);
+    },
+
+    /**
      * Return a list of all available sound devices
      * @return list of objects with device information
      */
