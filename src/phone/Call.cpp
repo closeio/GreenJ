@@ -106,6 +106,7 @@ QVariantMap Call::getInfo() const
     info.insert("acceptTime", accept_time_.isValid() ? (qint64)accept_time_.toTime_t() * 1000 + (qint64)accept_time_.time().msec() : 0);
     info.insert("closeTime", close_time_.isValid() ? (qint64)close_time_.toTime_t() * 1000 + (qint64)close_time_.time().msec() : 0);
     info.insert("userData", user_data_);
+    info.insert("headers", headers_);
     return info;
 }
 
