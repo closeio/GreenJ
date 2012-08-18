@@ -98,12 +98,13 @@ QVariantMap Call::getInfo() const
         info.insert("number", url_);
         info.insert("duration", duration_);
     }
+    info.insert("id", id_);
     info.insert("name", name_);
     info.insert("type", (int)type_);
     info.insert("status", (int)status_);
     info.insert("callTime", (qint64)start_time_.toTime_t() * 1000 + (qint64)start_time_.time().msec());
-    info.insert("acceptTime", (qint64)accept_time_.toTime_t() * 1000 + (qint64)accept_time_.time().msec());
-    info.insert("closeTime", (qint64)close_time_.toTime_t() * 1000 + (qint64)close_time_.time().msec());
+    info.insert("acceptTime", accept_time_.isValid() ? (qint64)accept_time_.toTime_t() * 1000 + (qint64)accept_time_.time().msec() : 0);
+    info.insert("closeTime", close_time_.isValid() ? (qint64)close_time_.toTime_t() * 1000 + (qint64)close_time_.time().msec() : 0);
     info.insert("userData", user_data_);
     return info;
 }
