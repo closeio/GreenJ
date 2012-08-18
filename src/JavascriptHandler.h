@@ -26,6 +26,9 @@ namespace phone {
     class Call;
 }
 
+/* We MUST use Call instead of phone::Call in the slots or Qt's magic won't work */
+using phone::Call;
+
 /**
  * This class is the bridge between Qt and website-javascript
  */
@@ -43,12 +46,19 @@ public:
      */
     JavascriptHandler(/*QWebView *web_view, */phone::Phone &phone);
 
+signals:
     /**
-     * Send current account state
-     * @param state
+     * Signal when weppage-url changed
      */
-    void accountStateChanged(const int state) const;
+    void signalWebPageChanged();
 
+public slots:    
+    /**
+     * Notify about an incoming call
+     * @param call
+     */
+    void incomingCall(Call &call) const;
+    
     /**
      * Send call state
      * @param call_id
@@ -56,44 +66,25 @@ public:
      * @param last_status last status code
      */
     void callState(const int call_id, const int code, const int last_status) const;
-
+    
     /**
-     * Notify about an incoming call
-     * @param call
+     * Send current account state
+     * @param state
      */
-    void incomingCall(const phone::Call &call) const;
-
-    /**
-     * Request the url of a page to print
-     * @return The url of the webpage that should be printed
-     */
-    QUrl getPrintUrl() const;
-
+    void accountStateChanged(const int state) const;
+    
     /**
      * Sound level has changed
      * @param level New sound level
      */
     void soundLevel(int level) const;
-
+    
     /**
      * Microphone level has changed
      * @param level New microphone level
      */
     void microphoneLevel(int level) const;
 
-signals:
-    /**
-     * Signal when weppage-url changed
-     */
-    void signalWebPageChanged();
-
-    /**
-     * Signal that a page should be printed
-     * @param url Page url
-     */
-    void signalPrintPage(const QUrl &url);
-
-public slots:
     /**
      * Register an individual callback-handler by name.
      * This handler is a JavaScript object and must implement
@@ -299,12 +290,6 @@ public slots:
     void setOption(const QString &name, const QVariant &option);
 
     /**
-     * Tell Qt to print a page given by url
-     * @param url_str The url of the page to print
-     */
-    void printPage(const QString &url_str);
-
-    /**
      * Get log message from js and send it to the log_handler
      * @param log The log object
      */
@@ -328,6 +313,7 @@ public slots:
      * @param file_name File name of log file that should be deleted
      */
     void deleteLogFile(const QString &file_name) const;
+
 
 private slots:
     /**

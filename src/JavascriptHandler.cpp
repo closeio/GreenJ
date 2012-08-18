@@ -28,9 +28,19 @@ using QtJson::Json;
 const QString JavascriptHandler::OBJECT_NAME = "qt_handler";
 
 //-----------------------------------------------------------------------------
-JavascriptHandler::JavascriptHandler(/*QWebView *web_view, */Phone &phone) :
-    /*web_view_(web_view),*/ phone_(phone), js_callback_handler_("")
+JavascriptHandler::JavascriptHandler(Phone &phone) :
+    phone_(phone), js_callback_handler_("")
 {
+    connect(&phone_, SIGNAL(signalIncomingCall(Call &)),
+            this, SLOT(incomingCall(Call &)));
+    connect(&phone_, SIGNAL(signalCallState(const int, const int, const int)),
+            this, SLOT(callState(const int, const int, const int)));
+    connect(&phone_, SIGNAL(signalSoundLevel(int)),
+            this, SLOT(soundLevel(int)));
+    connect(&phone_, SIGNAL(signalMicrophoneLevel(int)),
+            this, SLOT(microphoneLevel(int)));
+    connect(&phone_, SIGNAL(signalAccountStateChanged(const int)),
+            this, SLOT(accountStateChanged(const int)));
 }
 
 //-----------------------------------------------------------------------------
@@ -49,27 +59,12 @@ void JavascriptHandler::callState(const int call_id, const int code,
 }
 
 //-----------------------------------------------------------------------------
-void JavascriptHandler::incomingCall(const Call &call) const
+void JavascriptHandler::incomingCall(Call &call) const
 {
     evaluateJavaScript("incomingCall(" + QString::number(call.getId()) + ",'" 
                                        + call.getUrl() + "','" 
                                        + call.getName() + "',"
                                        + Json::serialize(call.getHeaders()) + ")");
-}
-
-//-----------------------------------------------------------------------------
-QUrl JavascriptHandler::getPrintUrl() const
-{
-    QVariant url = evaluateJavaScript("getPrintUrl();");
-
-    if (!url.convert(QVariant::Url)) {
-        if (!url.isNull()) {
-            LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "js_handler", 0, "Print page: Wrong url format"));
-        }
-        return QUrl("about:blank");
-    }
-
-    return url.toUrl();
 }
 
 //-----------------------------------------------------------------------------
@@ -83,15 +78,6 @@ void JavascriptHandler::microphoneLevel(int level) const
 {
     evaluateJavaScript("microphoneLevel(" + QString::number(level) + ")");
 }
-
-//-----------------------------------------------------------------------------
-//QVariant JavascriptHandler::evaluateJavaScript(const QString &code) const
-//{
-//    if (js_callback_handler_.isEmpty()) {
-//        return web_view_->page()->mainFrame()->evaluateJavaScript(code);
-//    }
-//    return web_view_->page()->mainFrame()->evaluateJavaScript(js_callback_handler_ + "." + code);
-//}
 
 //-----------------------------------------------------------------------------
 // Public slots
@@ -434,12 +420,6 @@ void JavascriptHandler::setOption(const QString &name, const QVariant &option)
 }
 
 //-----------------------------------------------------------------------------
-void JavascriptHandler::printPage(const QString &url_str)
-{
-    signalPrintPage(QUrl(url_str));
-}
-
-//-----------------------------------------------------------------------------
 bool JavascriptHandler::sendLogMessage(const QVariantMap &log) const
 {
     QVariant time   = log["time"];
@@ -466,7 +446,7 @@ bool JavascriptHandler::sendLogMessage(const QVariantMap &log) const
 QStringList JavascriptHandler::getLogFileList() const
 {
     return LogHandler::getInstance().getFileList();
-}
+}   
 
 //-----------------------------------------------------------------------------
 QString JavascriptHandler::getLogFileContent(const QString &file_name) const

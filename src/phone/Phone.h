@@ -234,11 +234,14 @@ public slots:
     void slotStopSound();
 
 signals:
-    void signalIncomingCall(const QString &call, const QVariantMap &header_map);
+    void signalCallState(const int call_id, const int code, const int last_status);
+    void signalIncomingCall(Call &call);
+    void signalSoundLevel(int level);
+    void signalMicrophoneLevel(int level);
+    void signalAccountStateChanged(const int state);
 
 private:
     api::Interface *api_;
-    JavascriptHandler *js_handler_;
     QVector<Call*> calls_;
     QString error_msg_;
 

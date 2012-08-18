@@ -25,7 +25,7 @@ namespace phone
 const QString Phone::ERROR_FILE = "error.log";
 
 //-----------------------------------------------------------------------------
-Phone::Phone(api::Interface *api) : api_(api), js_handler_(NULL)
+Phone::Phone(api::Interface *api) : api_(api)
 {
     connect(api_, SIGNAL(signalAccountState(const int)),
             this, SLOT(slotAccountState(const int)));
@@ -65,12 +65,6 @@ Phone::~Phone()
 bool Phone::init(const Settings &settings)
 {
     return api_->init(settings);
-}
-
-//-----------------------------------------------------------------------------
-void Phone::setJavascriptHandler(JavascriptHandler *js_handler)
-{
-    js_handler_ = js_handler;
 }
 
 //-----------------------------------------------------------------------------
@@ -256,11 +250,8 @@ void Phone::slotIncomingCall(int call_id, const QString &url, const QString &nam
         delete call;
         return;
     }
-    if (js_handler_) {
-        js_handler_->incomingCall(*call);
-    }
 
-    signalIncomingCall(call->getUrl(), header_map);
+    signalIncomingCall(*call);
 }
 
 //-----------------------------------------------------------------------------
@@ -270,34 +261,26 @@ void Phone::slotCallState(int call_id, int call_state, int last_status)
     if (call) {
         call->setState(call_state);
     }
-
-    if (js_handler_) {
-        js_handler_->callState(call_id, call_state, last_status);
-    }
+    
+    signalCallState(call_id, call_state, last_status);
 }
 
 //-----------------------------------------------------------------------------
 void Phone::slotSoundLevel(int level)
 {
-    if (js_handler_) {
-        js_handler_->soundLevel(level);
-    }
+    signalSoundLevel(level);
 }
 
 //-----------------------------------------------------------------------------
 void Phone::slotMicroLevel(int level)
 {
-    if (js_handler_) {
-        js_handler_->microphoneLevel(level);
-    }
+    signalMicrophoneLevel(level);
 }
 
 //-----------------------------------------------------------------------------
 void Phone::slotAccountState(const int state)
 {
-    if (js_handler_) {
-        js_handler_->accountStateChanged(state);
-    }
+    signalAccountStateChanged(state);
 }
 
 //-----------------------------------------------------------------------------
