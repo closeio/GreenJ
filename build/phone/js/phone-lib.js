@@ -328,7 +328,7 @@ li.Phone.prototype = {
         this.account.status       = info.status;
         this.account.onlineStatus = info.online_status;
 
-        var i, calllist = this.getQtHandler().getActiveCallList();
+        var i, calllist = this.getQtHandler().getCallList();
         for (i in calllist) {
             if (calllist.hasOwnProperty(i)) {
                 var opt = {
@@ -527,8 +527,6 @@ li.Phone.prototype = {
         }
         var c = new li.Phone.Call({ id: id, phone: this }, { type: li.Phone.Call.TYPE_OUTGOING, number: number, userdata: opt.userdata });
         this.trigger('onMakeCall', { outgoingCall: c });
-
-        var calllist = this.getQtHandler().getActiveCallList();
 
         return c;
     },
