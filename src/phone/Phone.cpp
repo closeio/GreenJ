@@ -167,6 +167,23 @@ Call *Phone::getCall(const int call_id)
 }
 
 //-----------------------------------------------------------------------------
+QVariantList Phone::getCallList() const
+{
+    QVariantList list;
+    for (int i = 0; i < calls_.size(); ++i) {
+        Call *call = calls_[i];
+        int id = call->getId();
+        if (call->getStatus() != Call::STATUS_CLOSED) {
+            QVariantMap current;
+            current.insert("id", id);
+            current = call->getInfo();
+            list << current;
+        }
+    }
+    return list;
+}
+
+//-----------------------------------------------------------------------------
 QVariantList Phone::getActiveCallList() const
 {
     QVariantList list;

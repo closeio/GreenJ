@@ -135,6 +135,8 @@ public:
      */
     QVariantList getActiveCallList() const;
 
+    QVariantList getCallList() const;
+
     /**
      * Set sound level
      * @param soundLevel 0.0f (mute) to 1.0f (full)

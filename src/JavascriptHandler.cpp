@@ -296,6 +296,12 @@ int JavascriptHandler::redirectCall(const int call_id, const QString &dst_uri) c
 }
 
 //-----------------------------------------------------------------------------
+QVariantList JavascriptHandler::getCallList() const
+{
+    return phone_.getCallList();
+}
+
+//-----------------------------------------------------------------------------
 QVariantList JavascriptHandler::getActiveCallList() const
 {
     return phone_.getActiveCallList();

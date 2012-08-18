@@ -206,7 +206,13 @@ public slots:
      * @return success code
      */
     int redirectCall(const int call_id, const QString &dst_uri) const;
-
+    
+    /**
+     * Get list of all calls
+     * @return List of calls
+     */
+    QVariantList getCallList() const;
+    
     /**
      * Get list of all active calls
      * @return List of active calls
