@@ -93,10 +93,12 @@ void Sound::startDial()
 //-----------------------------------------------------------------------------
 void Sound::setSoundDevice(const int device)
 {
-    device_ = device;
-    if (snd_port_) {
-        pjmedia_snd_port_destroy(snd_port_);
-        snd_port_ = NULL;
+    if (device != device_) {
+        device_ = device;
+        if (snd_port_) {
+            pjmedia_snd_port_destroy(snd_port_);
+            snd_port_ = NULL;
+        }
     }
 }
 
