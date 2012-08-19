@@ -200,6 +200,7 @@ int Sip::registerUser(const QString &user, const QString &password, const QStrin
     cfg.cred_info[0].username = pj_str(cuser);
     cfg.cred_info[0].data_type = PJSIP_CRED_DATA_PLAIN_PASSWD;
     cfg.cred_info[0].data = pj_str(cpassword);
+    cfg.allow_contact_rewrite = PJ_FALSE;
 
     pj_status_t status = pjsua_acc_add(&cfg, PJ_TRUE, &account_id_);
     if (status != PJ_SUCCESS) {
