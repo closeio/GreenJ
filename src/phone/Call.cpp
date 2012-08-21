@@ -47,9 +47,12 @@ int Call::makeCall(const QString &url, const QVariantMap &header_map)
     id_ = phone_->getApi()->makeCall(url_, header_map);
     active_ = true;
     
+    setHeaders(header_map);
+    
     if (id_ >= 0) {
         Sound::getInstance().startDial();
     }
+    
     return id_;
 }
 
