@@ -525,7 +525,7 @@ li.Phone.prototype = {
         if (id < 0) {
             throw li.errorType.PHONE_MAKECALL_FAILED;
         }
-        var c = new li.Phone.Call({ id: id, phone: this }, { type: li.Phone.Call.TYPE_OUTGOING, number: number, userdata: opt.userdata });
+        var c = new li.Phone.Call({ id: id, phone: this }, { type: li.Phone.Call.TYPE_OUTGOING, number: number, userdata: opt.userdata, headers: opt.headers });
         this.trigger('onMakeCall', { outgoingCall: c });
 
         return c;
