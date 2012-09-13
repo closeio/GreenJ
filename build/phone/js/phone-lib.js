@@ -958,8 +958,7 @@ li.Phone.Call.prototype = {
      */
     muteMicro: function(mute) {
         this.data.muteMicro = this.defaults(mute, true);
-        //TODO:
-        //this.phone.getQtHandler().muteCallMicrophone(this.id, this.data.muteMicro);
+        this.phone.getQtHandler().muteMicrophone(this.data.muteMicro, this.id);
     },
     /**
      * Check if micro is muted.
