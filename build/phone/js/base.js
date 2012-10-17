@@ -421,7 +421,7 @@ if (typeof window.console.log === 'undefined') {
                         if (cloneOptions.render) { this._render(code, msg, output, cloneOptions); }
                         if (cloneOptions.throwException) {
                             if (cloneOptions.exception) { throw cloneOptions.exception; }
-                            else { throw code; }
+                            else { throw code + ' '+ cloneOptions.output; }
                         }
                     }
                 }
