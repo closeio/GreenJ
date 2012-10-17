@@ -1202,9 +1202,10 @@ li.Phone.Handler.prototype = {
             return;
         }
         if (!this.phone.hasCallById(call_id)) {
-            // Call was initiated without us knowing.
+            // Call was initiated without us knowing. Update the call list.
             this.phone.update();
         }
+        // If the call still isn't there, throw an error.
         if (!this.phone.hasCallById(call_id)) {
 
             this.phone.trigger('onError', { message: "li.Phone.Handler.callStateChanged("+call_id+","+state+","+lastStatus+"): Call with id '"+call_id+"' does not exist." } );
