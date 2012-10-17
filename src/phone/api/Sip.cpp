@@ -609,7 +609,7 @@ void Sip::getCodecPriorities(QVariantMap &codecs)
 //-----------------------------------------------------------------------------
 bool Sip::setSoundDevice(const int input, const int output) {
     pj_status_t status = pjsua_set_snd_dev(input, output);
-    return (status = PJ_SUCCESS);
+    return (status == PJ_SUCCESS);
 }
 
 //-----------------------------------------------------------------------------
@@ -660,7 +660,7 @@ bool Sip::sendDTMFDigits(int call_id, const QString &digits) {
         }
     }
     
-    return (status = PJ_SUCCESS);
+    return (status == PJ_SUCCESS);
 }
 
 }} // phone::api::
