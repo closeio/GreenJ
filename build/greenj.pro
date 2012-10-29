@@ -140,9 +140,9 @@ HEADERS += $$SOURCEDIR/phone/api/Interface.h \
     $$SOURCEDIR/Config.h \
     $$SOURCEDIR/JavascriptHandler.h \
     $$SOURCEDIR/LogHandler.h \ 
-    $$SOURCEDIR/Sound.h \
     $$SOURCEDIR/WebPage.h
-#SOURCES += $$SOURCEDIR/main.cpp \
+mac: HEADERS += $$SOURCEDIR/cocoa/Sound.h
+!mac: HEADERS += $$SOURCEDIR/Sound.h
 SOURCES += $$SOURCEDIR/phone/api/Sip.cpp \
     $$SOURCEDIR/phone/Account.cpp \
     $$SOURCEDIR/phone/Call.cpp \
@@ -150,8 +150,9 @@ SOURCES += $$SOURCEDIR/phone/api/Sip.cpp \
     $$SOURCEDIR/Config.cpp \
     $$SOURCEDIR/JavascriptHandler.cpp \
     $$SOURCEDIR/LogHandler.cpp \
-    $$SOURCEDIR/Sound.cpp \
     $$VENDORDIR/qt-json/json.cpp
+mac: OBJECTIVE_SOURCES += $$SOURCEDIR/cocoa/Sound.mm
+!mac: SOURCES += $$SOURCEDIR/Sound.cpp
 FORMS += $$SOURCEDIR/gui.ui
 RESOURCES += $$RESOURCEDIR/gui.qrc
 
