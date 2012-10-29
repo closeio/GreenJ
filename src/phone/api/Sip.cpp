@@ -280,9 +280,8 @@ void Sip::incomingCallCb(pjsua_acc_id acc_id, pjsua_call_id call_id,
         }
     }
 
-    if (pjsua_call_get_count() <= 1) {
-        self_->signalRingSound();
-    }
+    self_->signalRingSound();
+
     self_->signalLog(LogInfo(LogInfo::STATUS_MESSAGE, "pjsip", 0, "Incoming call from " +
                              QString(ci.remote_contact.ptr)));
 
