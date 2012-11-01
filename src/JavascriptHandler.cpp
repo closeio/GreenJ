@@ -41,12 +41,21 @@ JavascriptHandler::JavascriptHandler(Phone &phone) :
             this, SLOT(microphoneLevel(int)));
     connect(&phone_, SIGNAL(signalAccountStateChanged(const int)),
             this, SLOT(accountStateChanged(const int)));
+    connect(&phone_, SIGNAL(signalSoundDevicesUpdated()),
+            this, SLOT(soundDevicesUpdated()));
 }
 
 //-----------------------------------------------------------------------------
 void JavascriptHandler::accountStateChanged(const int state) const
 {
     evaluateJavaScript("accountStateChanged(" + QString::number(state) + ")");
+}
+
+//-----------------------------------------------------------------------------
+void JavascriptHandler::soundDevicesUpdated() const
+{
+    // TODO: JS implementation
+//    evaluateJavaScript("soundDevicesUpdated()");
 }
 
 //-----------------------------------------------------------------------------

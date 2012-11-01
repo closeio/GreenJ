@@ -73,6 +73,11 @@ public slots:
      */
     void accountStateChanged(const int state) const;
     
+    /*
+     * Notify audio devices were updated
+     */
+    void soundDevicesUpdated() const;
+    
     /**
      * Sound level has changed
      * @param level New sound level

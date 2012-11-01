@@ -43,6 +43,8 @@ Phone::Phone(api::Interface *api) : api_(api)
             this, SLOT(slotRingSound()));
     connect(api_, SIGNAL(signalStopSound()),
             this, SLOT(slotStopSound()));
+    connect(api_, SIGNAL(signalSoundDevicesUpdated()),
+            this, SLOT(slotSoundDevicesUpdated()));
 }
 
 //-----------------------------------------------------------------------------
@@ -319,6 +321,12 @@ void Phone::slotRingSound()
 void Phone::slotStopSound()
 {
     Sound::getInstance().stop();
+}
+    
+//-----------------------------------------------------------------------------
+void Phone::slotSoundDevicesUpdated()
+{
+    signalSoundDevicesUpdated();
 }
 
 //-----------------------------------------------------------------------------

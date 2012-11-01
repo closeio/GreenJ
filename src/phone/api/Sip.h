@@ -80,11 +80,14 @@ public:
     virtual void setCodecPriority(const QString &codec, int new_priority);
     virtual void getCodecPriorities(QVariantMap &codecs);
     
+    virtual void setDefaultSoundDevice(const int input, const int output);
     virtual bool setSoundDevice(const int input, const int output);
     virtual void getSoundDevices(QVariantList &device_list);
     
     virtual bool sendDTMFDigits(int call_id, const QString &digits);
 
+    virtual void updateSoundDevices();
+    virtual bool selectSoundDevices();
 
     /**
      * Get the sip-address of a given call
@@ -145,6 +148,9 @@ private:
      * @param acc The id of the account which changed
      */
     static void registerStateCb(pjsua_acc_id acc);
+    
+    QString lastSoundInputString_, lastSoundOutputString_;
+    int defaultSoundInput_, defaultSoundOutput_;
 };
 
 }} // phone::api::

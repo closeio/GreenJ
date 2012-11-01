@@ -236,6 +236,11 @@ public slots:
     void slotStopSound();
     
     /**
+     * Slot that gets called when sound devices are updated
+     */
+    void slotSoundDevicesUpdated();
+    
+    /**
      * Send DTMF digits.
      * @param call_id ID of call
      * @param digit The DTMF digits that should be sent.
@@ -248,6 +253,7 @@ signals:
     void signalSoundLevel(int level);
     void signalMicrophoneLevel(int level);
     void signalAccountStateChanged(const int state);
+    void signalSoundDevicesUpdated();
 
 private:
     api::Interface *api_;
