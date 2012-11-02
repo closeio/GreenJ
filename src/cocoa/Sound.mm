@@ -84,8 +84,8 @@ void Sound::startRing()
         [sound_ stop];
     } else {
         sound_ = [[NSSound alloc] initWithContentsOfFile:filename byReference:YES];
-        setSoundDevice(device_);
     }
+    setSoundDevice(device_);
     [sound_ setLoops:YES];
     [sound_ play];
 }
@@ -101,6 +101,8 @@ void Sound::setSoundDevice(const int device)
     device_ = device;
     
     if (sound_) {
+        [sound_ setPlaybackDeviceIdentifier:nil]; // default
+
         UInt32 size = 0;
         OSStatus err = noErr;
 
