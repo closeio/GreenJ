@@ -32,6 +32,7 @@
  *      onRegisterUpdate    {}                                  after register() and first update()
  *      onUnregister        {}                                  after unregister() > unregisterFromServer
  *      onAccountState      { state: state }                    account state has changed
+ *      onSoundDevicesUpdated {}                                sound devices have been updated
  *      onOptionsChanged    {}                                  after setOptions() (use this.options to read options)
  *      onMakeCall          { outgoingCall: li.Phone.Call }     after makeCall()
  *      onSoundLevelChanged integer level
@@ -1228,6 +1229,13 @@ li.Phone.Handler.prototype = {
      */
     accountStateChanged: function(state) {
         this.phone.trigger('onAccountState', { state: state } );
+    },
+    /**
+     * The sound devices have been updated.
+     *  Triggers li.Phone.'onSoundDevicesUpdated'
+     */
+    soundDevicesUpdated: function(state) {
+        this.phone.trigger('onSoundDevicesUpdated');
     },
     /**
      * The sound level has changed

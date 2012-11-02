@@ -54,8 +54,7 @@ void JavascriptHandler::accountStateChanged(const int state) const
 //-----------------------------------------------------------------------------
 void JavascriptHandler::soundDevicesUpdated() const
 {
-    // TODO: JS implementation
-//    evaluateJavaScript("soundDevicesUpdated()");
+    evaluateJavaScript("soundDevicesUpdated()");
 }
 
 //-----------------------------------------------------------------------------
