@@ -1202,16 +1202,15 @@ li.Phone.Handler.prototype = {
             return;
         }
         if (!this.phone.hasCallById(call_id)) {
-            // Call was initiated without us knowing. Update the call list.
+            // Call might have been initiated without us knowing. Update the call list.
             this.phone.update();
         }
-        // If the call still isn't there, throw an error.
-        if (!this.phone.hasCallById(call_id)) {
 
-            this.phone.trigger('onError', { message: "li.Phone.Handler.callStateChanged("+call_id+","+state+","+lastStatus+"): Call with id '"+call_id+"' does not exist." } );
-            return;
+        // Check again for the call object, as in some cases we still might not have the call object.
+        // This can happen when we initiate a call that failed.
+        if (this.phone.hasCallById(call_id)) {
+            this.phone.getCallById(call_id).updateLastStatus(lastStatus);
         }
-        this.phone.getCallById(call_id).updateLastStatus(lastStatus);
         switch(state) {
             case li.Phone.Call.SIP_STATE_CONFIRMED:         // call accepted
                 this.phone.trigger('onCallAccept', { id: call_id } );
