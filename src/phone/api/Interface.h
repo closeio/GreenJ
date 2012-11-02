@@ -158,6 +158,13 @@ public:
     virtual void setCodecPriority(const QString &codec, int new_priority) = 0;
     
     /**
+     * Set default sound device
+     * @param input Device ID of the capture device.
+     * @param output Device ID of the playback device.
+     */
+    virtual void setDefaultSoundDevice(const int input, const int output) = 0;
+    
+    /**
      * Select or change sound device
      * @param input Device ID of the capture device.
      * @param output Device ID of the playback device.
@@ -183,6 +190,13 @@ public:
      * @return true, if successful
      */
     virtual bool sendDTMFDigits(int call_id, const QString &digits) = 0;
+    
+    // This method will leave the application silent.
+    // selectSoundDevices should be called after calling this
+    // method to restore sound.
+    virtual void updateSoundDevices() = 0;
+    
+    virtual bool selectSoundDevices() = 0;
 
 signals:
     /**
@@ -232,6 +246,11 @@ signals:
      * Send signal to stop sounds
      */
     void signalStopSound();
+
+    /**
+     * Send signal when audio devices change
+     */
+    void signalSoundDevicesUpdated();
 
 };
 

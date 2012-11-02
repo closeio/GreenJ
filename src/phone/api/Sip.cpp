@@ -604,11 +604,67 @@ void Sip::getCodecPriorities(QVariantMap &codecs)
         codecs.insert(QString(codec[i].codec_id.ptr), codec[i].priority);
     }
 }
-        
+
+//-----------------------------------------------------------------------------
+void Sip::setDefaultSoundDevice(const int input, const int output) {
+    defaultSoundInput_ = input;
+    defaultSoundOutput_ = output;
+}
+
 //-----------------------------------------------------------------------------
 bool Sip::setSoundDevice(const int input, const int output) {
-    pj_status_t status = pjsua_set_snd_dev(input, output);
+    pj_status_t status = pjsua_set_snd_dev(
+            input == -1 ? defaultSoundInput_ : input,
+            output == -1 ? defaultSoundOutput_ : output);
+    
+    if (status == PJ_SUCCESS) {
+        pjmedia_aud_dev_info info;
+        
+        if (input != -1) {
+            status = pjmedia_aud_dev_get_info(input, &info);
+            
+            if (status == PJ_SUCCESS) {
+                lastSoundInputString_ = info.name;
+            }
+        }
+        
+        if (output != -1) {
+            status = pjmedia_aud_dev_get_info(output, &info);
+            
+            if (status == PJ_SUCCESS) {
+                lastSoundOutputString_ = info.name;
+            }
+        }
+    }
+    
     return (status == PJ_SUCCESS);
+}
+
+//-----------------------------------------------------------------------------
+bool Sip::selectSoundDevices() {
+
+    unsigned dev_count = pjmedia_aud_dev_count();
+    pj_status_t status;
+    int input = -1,
+        output = -1;
+    
+    for (unsigned i=0; i<dev_count; ++i) {
+        pjmedia_aud_dev_info info;
+        
+        status = pjmedia_aud_dev_get_info(i, &info);
+        
+        if (status != PJ_SUCCESS)
+            continue;
+        
+        if (lastSoundInputString_ == info.name) {
+            input = i;
+        }
+        if (lastSoundOutputString_ == info.name) {
+            output = i;
+        }
+    }
+
+    return setSoundDevice(input, output);
 }
 
 //-----------------------------------------------------------------------------
@@ -635,7 +691,8 @@ void Sip::getSoundDevices(QVariantList &device_list)
         device_list.append(device_info);
     }
 }
-        
+   
+//-----------------------------------------------------------------------------
 bool Sip::sendDTMFDigits(int call_id, const QString &digits) {
     pj_status_t status;
     pj_str_t pjDigits = pj_str(digits.toUtf8().data());
@@ -660,6 +717,20 @@ bool Sip::sendDTMFDigits(int call_id, const QString &digits) {
     }
     
     return (status == PJ_SUCCESS);
+}
+
+
+//-----------------------------------------------------------------------------
+// Adapted from Telephone.
+void Sip::updateSoundDevices() {
+    // Stop sound device and disconnect it from the conference.
+    pjsua_set_null_snd_dev();
+    
+    // Reinit sound device.
+    pjmedia_snd_deinit();
+    pjmedia_snd_init(pjsua_get_pool_factory());
+    
+    signalSoundDevicesUpdated();
 }
 
 }} // phone::api::
