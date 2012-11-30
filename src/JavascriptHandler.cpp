@@ -23,7 +23,7 @@
 using phone::Phone;
 using phone::Call;
 using phone::Account;
-using QtJson::Json;
+namespace Json=QtJson;
 
 const QString JavascriptHandler::OBJECT_NAME = "qt_handler";
 
