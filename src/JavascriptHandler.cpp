@@ -477,7 +477,9 @@ void JavascriptHandler::deleteLogFile(const QString &file_name) const
 //-----------------------------------------------------------------------------
 void JavascriptHandler::sendDTMFDigits(const int call_id, const QString &digit) const {
     Call *call = phone_.getCall(call_id);
-    call->sendDTMFDigits(digit.toUtf8().data());
+    if (call) {
+        call->sendDTMFDigits(digit);
+    }
 }
 
 //-----------------------------------------------------------------------------

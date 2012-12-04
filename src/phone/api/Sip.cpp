@@ -695,7 +695,8 @@ void Sip::getSoundDevices(QVariantList &device_list)
 //-----------------------------------------------------------------------------
 bool Sip::sendDTMFDigits(int call_id, const QString &digits) {
     pj_status_t status;
-    pj_str_t pjDigits = pj_str(digits.toUtf8().data());
+    QByteArray arr = digits.toUtf8();
+    pj_str_t pjDigits = pj_str(arr.data());
     
     // Try to send RFC2833 DTMF first.
     status = pjsua_call_dial_dtmf(call_id, &pjDigits);
