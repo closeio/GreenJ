@@ -151,6 +151,13 @@ bool Sip::_addTransport(pjsip_transport_type_e type, unsigned int port)
 
         tcp_cfg.port = pj_ntohs(a->sin_port);
     }
+
+    // Add TCP transport. Don't return, just leave a log message on error.
+    status = pjsua_transport_create(PJSIP_TRANSPORT_TCP, &cfg, NULL);
+    if (status != PJ_SUCCESS) {
+        signalLog(LogInfo(LogInfo::STATUS_FATAL, "pjsip", status, "TCP transport creation failed"));
+    }
+
     return true;
 }
 
