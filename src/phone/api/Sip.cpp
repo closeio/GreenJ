@@ -128,7 +128,6 @@ bool Sip::_initPjsua(const QString &stun)
 bool Sip::_addTransport(pjsip_transport_type_e type, unsigned int port)
 {
     pjsua_transport_config cfg;
-    pjsua_acc_id aid;
     pjsua_transport_id transport_id = -1;
     pjsua_transport_config tcp_cfg;
 
@@ -142,10 +141,6 @@ bool Sip::_addTransport(pjsip_transport_type_e type, unsigned int port)
         signalLog(LogInfo(LogInfo::STATUS_FATAL, "pjsip", status, "Transport creation failed"));
         return false;
     }
-
-    // Add local account
-    pjsua_acc_add_local(transport_id, PJ_TRUE, &aid);
-    pjsua_acc_set_online_status(aid, PJ_TRUE);
 
     if (cfg.port == 0) {
         pjsua_transport_info ti;
