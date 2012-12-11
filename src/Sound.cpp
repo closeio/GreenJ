@@ -24,13 +24,19 @@ Sound::Sound()
 //-----------------------------------------------------------------------------
 Sound::~Sound()
 {
+    // The following code might crash if the Sip destructor is called before
+    // this gets called. Since we're shutting down the app anyway, we'll just
+    // not deallocate the resources and have the OS do it for us.
+    /*
     stop();
     if (snd_port_) {
         pjmedia_snd_port_destroy(snd_port_);
         snd_port_ = NULL;
     }
+
     if (pool_)
         pj_pool_release(pool_);
+    */
 }
 
 //-----------------------------------------------------------------------------
@@ -82,6 +88,8 @@ void Sound::startRing()
             LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "pjsip", status, "Failed to play"));
             return;
         }
+    } else {
+        LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "pjsip", status, "No ringtone set"));
     }
 }
 
