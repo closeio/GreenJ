@@ -43,6 +43,8 @@ Sip *Sip::self_;
 Sip::Sip()
 {
     self_ = this;
+    defaultSoundInput_ = -1;
+    defaultSoundOutput_ = -1;
 }
 
 //-----------------------------------------------------------------------------
