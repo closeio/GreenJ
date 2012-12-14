@@ -646,7 +646,6 @@ bool Sip::setSoundDevice(const int input, const int output) {
 
 //-----------------------------------------------------------------------------
 bool Sip::selectSoundDevices() {
-
     unsigned dev_count = pjmedia_aud_dev_count();
     pj_status_t status;
     int input = -1,
@@ -660,10 +659,10 @@ bool Sip::selectSoundDevices() {
         if (status != PJ_SUCCESS)
             continue;
         
-        if (lastSoundInputString_ == info.name) {
+        if (info.input_count > 0 && lastSoundInputString_ == info.name) {
             input = i;
         }
-        if (lastSoundOutputString_ == info.name) {
+        if (info.output_count > 0 && lastSoundOutputString_ == info.name) {
             output = i;
         }
     }
