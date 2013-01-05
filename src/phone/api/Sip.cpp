@@ -91,7 +91,11 @@ bool Sip::_initPjsua(const QString &stun)
 {
     pjsua_config cfg;
     pjsua_logging_config log_cfg;
+    pjsua_media_config media_cfg;
     pjsua_config_default(&cfg);
+    pjsua_media_config_default(&media_cfg);
+
+    media_cfg.snd_clock_rate = 8000; // Fix problems with audio tag in WebViews the Mac
 
     // TODO: additional configurations
     // * max_calls
@@ -117,7 +121,7 @@ bool Sip::_initPjsua(const QString &stun)
     pjsua_logging_config_default(&log_cfg);
     log_cfg.console_level = 4;
 
-    pj_status_t status = pjsua_init(&cfg, &log_cfg, NULL);
+    pj_status_t status = pjsua_init(&cfg, &log_cfg, &media_cfg);
     if (status != PJ_SUCCESS) {
         signalLog(LogInfo(LogInfo::STATUS_FATAL, "pjsip", status, "pjsua initialization failed"));
         return false;
