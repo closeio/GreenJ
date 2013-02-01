@@ -21,9 +21,10 @@ namespace phone
 //-----------------------------------------------------------------------------
 Call::Call(Phone *phone, const Type type, const Status status) :
     phone_(phone), 
-    type_(type), status_(status), active_(false), 
-    id_(-1), call_state_(0), media_state_(0), 
-    start_time_(QDateTime::currentDateTime())
+    type_(type), status_(status), active_(false),
+    id_(-1), call_state_(0), media_state_(0),
+    start_time_(QDateTime::currentDateTime()),
+    dump_("")
 {
 }
 
@@ -271,6 +272,19 @@ QVariantMap Call::getSignalLevels() const
     QVariantMap info;
     phone_->getApi()->getSignalLevels(info, id_);
     return info;
+}
+    
+void Call::setDump(const QString dump) {
+    dump_ = dump;
+}
+
+QString Call::getDump() {
+    if (status_ != Call::STATUS_CLOSED) {
+        const QString dump = phone_->getApi()->getCallDump(id_);
+        if (dump != "")
+            dump_ = dump;
+    }
+    return dump_;
 }
 
 //-----------------------------------------------------------------------------

@@ -33,6 +33,8 @@ Phone::Phone(api::Interface *api) : api_(api)
             this, SLOT(slotIncomingCall(int, QString, QString, QVariantMap)));
     connect(api_, SIGNAL(signalCallState(int,int,int)),
             this, SLOT(slotCallState(int,int,int)));
+    connect(api_, SIGNAL(signalCallDump(int,QString)),
+            this, SLOT(slotCallDump(int,QString)));
     connect(api_, SIGNAL(signalSoundLevel(int)),
             this, SLOT(slotSoundLevel(int)));
     connect(api_, SIGNAL(signalMicroLevel(int)),
@@ -282,6 +284,15 @@ void Phone::slotCallState(int call_id, int call_state, int last_status)
     }
     
     signalCallState(call_id, call_state, last_status);
+}
+    
+//-----------------------------------------------------------------------------
+void Phone::slotCallDump(int call_id, QString dump)
+{
+    Call *call = getCall(call_id);
+    if (call) {
+        call->setDump(dump);
+    }
 }
 
 //-----------------------------------------------------------------------------

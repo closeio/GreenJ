@@ -194,6 +194,16 @@ void JavascriptHandler::setLogLevel(const unsigned int log_level) const
 }
 
 //-----------------------------------------------------------------------------
+QString JavascriptHandler::getCallDump(const int call_id) const
+{
+    Call *call = phone_.getCall(call_id);
+    if (call) {
+        return call->getDump();
+    }
+    return "";
+}
+
+//-----------------------------------------------------------------------------
 QString JavascriptHandler::getCallUserData(const int call_id) const
 {
     Call *call = phone_.getCall(call_id);

@@ -128,6 +128,8 @@ public:
      * @param call_info Map, to store information in
      */
     virtual void getCallInfo(const int call_id, QVariantMap &call_info) = 0;
+    
+    virtual QString getCallDump(const int call_id) = 0;
 
     /**
      * Set sound level
@@ -218,6 +220,8 @@ signals:
      * @param state Old call state
      */
     void signalCallState(int call_id, int state, int last_status);
+    
+    void signalCallDump(int call_id, const QString &dump);
 
     /**
      * Send signal to handle log data

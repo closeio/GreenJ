@@ -247,6 +247,9 @@ public:
      * @param Map with 'sound' and 'micro' signal levels (floats)
      */
     QVariantMap getSignalLevels() const;
+    
+    void setDump(const QString dump);
+    QString getDump();
 
     /**
      * Setters, only needed for error logging
@@ -296,6 +299,8 @@ private:
     QString user_data_;
 
     QVariantMap headers_;
+    
+    QString dump_;
 };
 
 } // phone::

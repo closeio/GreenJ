@@ -246,6 +246,9 @@ public slots:
      * @param digit The DTMF digits that should be sent.
      */
     void sendDTMFDigits(int call_id, const QString &digits);
+    
+    void slotCallDump(int call_id, QString dump);
+
 
 signals:
     void signalCallState(const int call_id, const int code, const int last_status);

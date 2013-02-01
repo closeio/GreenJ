@@ -162,6 +162,8 @@ public slots:
      * Set the LogLevel
      */
     void setLogLevel(const unsigned int log_level) const;
+    
+    QString getCallDump(const int call_id) const;
 
     /**
      * Get stored custom user data to specific call

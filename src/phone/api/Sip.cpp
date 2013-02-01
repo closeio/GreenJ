@@ -304,17 +304,21 @@ void Sip::callStateCb(pjsua_call_id call_id, pjsip_event *e)
     PJ_UNUSED_ARG(e);
 
     pjsua_call_get_info(call_id, &ci);
-    
-    if (ci.state == PJSIP_INV_STATE_CONFIRMED 
+
+    if (ci.state == PJSIP_INV_STATE_CONFIRMED
         || ci.state == PJSIP_INV_STATE_DISCONNECTED) 
     {
         self_->signalStopSound();
     }
     if (ci.state == PJSIP_INV_STATE_DISCONNECTED) {
+        // Get a call dump now before we hang up.
+        const QString dump = self_->getCallDump(call_id);
+        self_->signalCallDump(call_id, dump);
+
         self_->hangUp(call_id);
     }
 
-    self_->signalLog(LogInfo(LogInfo::STATUS_DEBUG, "pjsip", 0, 
+    self_->signalLog(LogInfo(LogInfo::STATUS_DEBUG, "pjsip", 0,
                              "State of call " + QString::number(call_id)
                              + " changed to " + QString::number(ci.state)));
 
@@ -534,6 +538,16 @@ void Sip::getCallInfo(const int call_id, QVariantMap &call_info)
     call_info.insert("state", (int)ci.state);
     call_info.insert("lastStatus", escape(ci.last_status_text.ptr));
     call_info.insert("duration", (int)ci.connect_duration.sec);
+}
+
+//-----------------------------------------------------------------------------
+QString Sip::getCallDump(const int call_id)
+{
+    char buf[8192];
+    if (pjsua_call_dump(call_id, TRUE, buf, sizeof(buf), "  ") == PJ_SUCCESS)
+        return QString(buf);
+    else
+        return "";
 }
 
 //-----------------------------------------------------------------------------

@@ -52,6 +52,7 @@ public:
     virtual int redirectCall(const int call_id, const QString &dest_uri);
 
     virtual void getCallInfo(const int call_id, QVariantMap &call_info);
+    virtual QString getCallDump(const int call_id);
 
     virtual void setSoundSignal(const float soundLevel, const int call_id = -1);
     virtual void setMicroSignal(const float microLevel, const int call_id = -1);
