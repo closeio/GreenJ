@@ -272,6 +272,8 @@ void Phone::slotIncomingCall(int call_id, const QString &url, const QString &nam
         return;
     }
 
+    call->answerCall(180); /* Ringing */
+
     signalIncomingCall(*call);
 }
 
