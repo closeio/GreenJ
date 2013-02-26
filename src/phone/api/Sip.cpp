@@ -131,6 +131,7 @@ bool Sip::_initPjsua(const QString &stun)
 }
 
 //-----------------------------------------------------------------------------
+// TODO: make it nicer to switch between different transport types (UDP, TCP, TLS)
 bool Sip::_addTransport(pjsip_transport_type_e type, unsigned int port)
 {
     pjsua_transport_config cfg;
@@ -142,13 +143,14 @@ bool Sip::_addTransport(pjsip_transport_type_e type, unsigned int port)
 
     // TODO: tls settings
 
-    pj_status_t status = pjsua_transport_create(type, &cfg, &transport_id);
+    pj_status_t status;
+    status = pjsua_transport_create(type, &cfg, &transport_id);
     if (status != PJ_SUCCESS) {
         signalLog(LogInfo(LogInfo::STATUS_FATAL, "pjsip", status, "Transport creation failed"));
         return false;
     }
 
-    if (cfg.port == 0) {
+    /*if (cfg.port == 0) {
         pjsua_transport_info ti;
         pj_sockaddr_in *a;
 
@@ -156,12 +158,13 @@ bool Sip::_addTransport(pjsip_transport_type_e type, unsigned int port)
         a = (pj_sockaddr_in*)&ti.local_addr;
 
         tcp_cfg.port = pj_ntohs(a->sin_port);
-    }
+    }*/
 
-    // Add TCP transport. Don't return, just leave a log message on error.
+    // Add TCP transport.
     status = pjsua_transport_create(PJSIP_TRANSPORT_TCP, &cfg, NULL);
     if (status != PJ_SUCCESS) {
         signalLog(LogInfo(LogInfo::STATUS_FATAL, "pjsip", status, "TCP transport creation failed"));
+        return false;
     }
 
     return true;
@@ -176,7 +179,7 @@ int Sip::registerUser(const QString &user, const QString &password, const QStrin
     }
 
     QString id = "sip:" + user + "@" + domain;
-    QString uri = "sip:" + domain;
+    QString uri = "sip:" + domain + ";transport=tcp";
 
     if (id.size() > 149
         || uri.size() > 99
