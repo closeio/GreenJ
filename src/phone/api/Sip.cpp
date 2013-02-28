@@ -687,6 +687,8 @@ void Sip::setDefaultSoundDevice(const int input, const int output) {
 
 //-----------------------------------------------------------------------------
 bool Sip::setSoundDevice(const int input, const int output) {
+    if (!started_) { return false; }
+
     pj_status_t status = pjsua_set_snd_dev(
             input == -1 ? defaultSoundInput_ : input,
             output == -1 ? defaultSoundOutput_ : output);
@@ -716,6 +718,8 @@ bool Sip::setSoundDevice(const int input, const int output) {
 
 //-----------------------------------------------------------------------------
 bool Sip::selectSoundDevices() {
+    if (!started_) { return false; }
+
     unsigned dev_count = pjmedia_aud_dev_count();
     pj_status_t status;
     int input = -1,
