@@ -130,7 +130,7 @@ bool JavascriptHandler::initialize(const QVariantMap &settings) const
     phoneSettings.sound_level_ = 1.0f;
     phoneSettings.micro_level_ = 1.0f;
     
-    phone_.init(phoneSettings);
+    return phone_.init(phoneSettings);
 }
 
 //-----------------------------------------------------------------------------
