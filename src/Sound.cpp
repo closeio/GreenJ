@@ -18,7 +18,7 @@
 //-----------------------------------------------------------------------------
 Sound::Sound()
 {
-    pool_ = pjsua_pool_create("wav", 512, 512);
+    // Don't create the pool here yet, since it will crash on Windows.
 }
 
 //-----------------------------------------------------------------------------
@@ -50,6 +50,10 @@ Sound &Sound::getInstance()
 void Sound::startRing()
 {
     pj_status_t status;
+
+    if (!pool_) {
+        pool_ = pjsua_pool_create("wav", 512, 512);
+    }
 
     if (pool_ && ringFilename.length()) {
         status = pjmedia_wav_player_port_create(pool_, /* memory pool */
