@@ -27,14 +27,24 @@ namespace phone
     namespace api {
         class Interface;
     }
+    
+    enum Transport {
+        TRANSPORT_AUTO ,
+        TRANSPORT_UDP,
+        TRANSPORT_TCP
+    };
+
 
 /**
  * Phone settings
  */
 struct Settings
 {
+    Transport transport_;
+    
     unsigned int port_;
     QString stun_server_;
+    bool use_ice_;
 
     float sound_level_;
     float micro_level_;

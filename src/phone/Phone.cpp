@@ -68,7 +68,12 @@ Phone::~Phone()
 //-----------------------------------------------------------------------------
 bool Phone::init(const Settings &settings)
 {
-    return api_->init(settings);
+    if (api_->init(settings)) {
+        api_->updateSoundDevices();
+        api_->selectSoundDevices();
+        return true;
+    }
+    return false;
 }
 
 //-----------------------------------------------------------------------------

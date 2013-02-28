@@ -45,6 +45,7 @@ Sip::Sip()
     self_ = this;
     defaultSoundInput_ = -1;
     defaultSoundOutput_ = -1;
+    started_ = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -53,9 +54,18 @@ Sip::~Sip()
     pjsua_destroy();
 }
 
+bool Sip::isInitialized() const {
+    return started_;
+}
+
 //-----------------------------------------------------------------------------
 bool Sip::init(const Settings &settings)
 {
+    if (started_) {
+        signalLog(LogInfo(LogInfo::STATUS_FATAL, "pjsip", 0, "Already initialized"));
+        return false;
+    }
+
     // Create pjsua first
     pj_status_t status = pjsua_create();
     if (status != PJ_SUCCESS) {
@@ -64,12 +74,12 @@ bool Sip::init(const Settings &settings)
     }
 
     // Init pjsua
-    if (!_initPjsua(settings.stun_server_)) {
+    if (!_initPjsua(settings.stun_server_, settings.use_ice_)) {
         return false;
     }
 
     // Add UDP transport
-    if (!_addTransport(PJSIP_TRANSPORT_UDP, settings.port_)) {
+    if (!_addTransport(settings.transport_, settings.port_)) {
         return false;
     }
     
@@ -83,17 +93,21 @@ bool Sip::init(const Settings &settings)
     pjsua_conf_adjust_rx_level(0, settings.sound_level_);
     pjsua_conf_adjust_tx_level(0, settings.micro_level_);
     
+    started_ = true;
+    
     return true;
 }
 
 //-----------------------------------------------------------------------------
-bool Sip::_initPjsua(const QString &stun)
+bool Sip::_initPjsua(const QString &stun, bool ice)
 {
     pjsua_config cfg;
     pjsua_logging_config log_cfg;
     pjsua_media_config media_cfg;
     pjsua_config_default(&cfg);
     pjsua_media_config_default(&media_cfg);
+    
+    media_cfg.enable_ice = ice;
 
     media_cfg.snd_clock_rate = 8000; // Fix problems with audio tag in WebViews the Mac
 
@@ -132,7 +146,7 @@ bool Sip::_initPjsua(const QString &stun)
 
 //-----------------------------------------------------------------------------
 // TODO: make it nicer to switch between different transport types (UDP, TCP, TLS)
-bool Sip::_addTransport(pjsip_transport_type_e type, unsigned int port)
+bool Sip::_addTransport(Transport transport, unsigned int port)
 {
     pjsua_transport_config cfg;
     pjsua_transport_id transport_id = -1;
@@ -141,14 +155,25 @@ bool Sip::_addTransport(pjsip_transport_type_e type, unsigned int port)
     pjsua_transport_config_default(&cfg);
     cfg.port = port;
 
-    // TODO: tls settings
-
+    // TODO: TLS transport
+    
     pj_status_t status;
-    status = pjsua_transport_create(type, &cfg, &transport_id);
+    status = pjsua_transport_create(PJSIP_TRANSPORT_UDP, &cfg, &transport_id);
     if (status != PJ_SUCCESS) {
-        signalLog(LogInfo(LogInfo::STATUS_FATAL, "pjsip", status, "Transport creation failed"));
-        return false;
+        signalLog(LogInfo(LogInfo::STATUS_FATAL, "pjsip", status, "UDP Transport creation failed"));
+        // Don't return, try TCP.
     }
+    
+    if (status != PJ_SUCCESS || transport == TRANSPORT_TCP) {
+        // Add TCP transport.
+        status = pjsua_transport_create(PJSIP_TRANSPORT_TCP, &cfg, NULL);
+        if (status != PJ_SUCCESS) {
+            signalLog(LogInfo(LogInfo::STATUS_FATAL, "pjsip", status, "TCP transport creation failed"));
+            return false;
+        }
+    }
+    
+    transport_ = transport;
 
     /*if (cfg.port == 0) {
         pjsua_transport_info ti;
@@ -160,12 +185,6 @@ bool Sip::_addTransport(pjsip_transport_type_e type, unsigned int port)
         tcp_cfg.port = pj_ntohs(a->sin_port);
     }*/
 
-    // Add TCP transport.
-    status = pjsua_transport_create(PJSIP_TRANSPORT_TCP, &cfg, NULL);
-    if (status != PJ_SUCCESS) {
-        signalLog(LogInfo(LogInfo::STATUS_FATAL, "pjsip", status, "TCP transport creation failed"));
-        return false;
-    }
 
     return true;
 }
@@ -173,13 +192,22 @@ bool Sip::_addTransport(pjsip_transport_type_e type, unsigned int port)
 //-----------------------------------------------------------------------------
 int Sip::registerUser(const QString &user, const QString &password, const QString &domain)
 {
+    if (!started_) {
+        signalLog(LogInfo(LogInfo::STATUS_ERROR, "pjsip", 0, "SIP is not initialized"));
+        return -1;
+    }
+    
     if (pjsua_acc_is_valid(account_id_)) {
         signalLog(LogInfo(LogInfo::STATUS_WARNING, "pjsip", 0, "Account already exists"));
         return -1;
     }
 
     QString id = "sip:" + user + "@" + domain;
-    QString uri = "sip:" + domain + ";transport=tcp";
+    QString uri = "sip:" + domain;
+    
+    if (transport_ == TRANSPORT_TCP) {
+        uri += ";transport=tcp";
+    }
 
     if (id.size() > 149
         || uri.size() > 99
@@ -234,7 +262,7 @@ int Sip::registerUser(const QString &user, const QString &password, const QStrin
 //-----------------------------------------------------------------------------
 bool Sip::checkAccountStatus()
 {
-    return pjsua_acc_is_valid(account_id_);
+    return started_ && pjsua_acc_is_valid(account_id_);
 }
 
 //-----------------------------------------------------------------------------

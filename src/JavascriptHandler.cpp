@@ -110,6 +110,29 @@ QVariantMap JavascriptHandler::getAccountInformation() const
     return phone_.getAccountInfo();
 }
 
+bool JavascriptHandler::initialize(const QVariantMap &settings) const
+{
+    phone::Settings phoneSettings;
+    
+    QString transport = settings["transport"].toString();
+    
+    if (transport == "udp") {
+        phoneSettings.transport_ = phone::TRANSPORT_UDP;
+    } else if (transport == "tcp") {
+        phoneSettings.transport_ = phone::TRANSPORT_TCP;
+    } else {
+        phoneSettings.transport_ = phone::TRANSPORT_AUTO;
+    }
+    
+    phoneSettings.port_ = 0;
+    phoneSettings.stun_server_ = settings["stun_host"].toString(); // default: ""
+    phoneSettings.use_ice_ = settings["use_ice"].toBool(); // default: false
+    phoneSettings.sound_level_ = 1.0f;
+    phoneSettings.micro_level_ = 1.0f;
+    
+    phone_.init(phoneSettings);
+}
+
 //-----------------------------------------------------------------------------
 bool JavascriptHandler::registerToServer(const QString &host, const QString &user_name,
                                          const QString &password) const

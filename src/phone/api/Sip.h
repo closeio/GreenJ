@@ -15,6 +15,7 @@
 #include <pjsua-lib/pjsua.h>
 #include <QVector>
 #include "Interface.h"
+#include "../Phone.h"
 
 namespace phone
 {
@@ -33,6 +34,7 @@ public:
     Sip();
     ~Sip();
 
+    virtual bool isInitialized() const;
     virtual bool init(const Settings &settings);
 
     virtual int registerUser(const QString &user, const QString &password, const QString &domain);
@@ -112,7 +114,7 @@ private:
      * Initialize pjsua
      * @return true, if successful
      */
-    bool _initPjsua(const QString &stun);
+    bool _initPjsua(const QString &stun, bool ice);
 
     /**
      * Add UDP transport
@@ -120,7 +122,7 @@ private:
      * @param port
      * @return true, if successful
      */
-    bool _addTransport(pjsip_transport_type_e type, unsigned int port);
+    bool _addTransport(Transport transport, unsigned int port);
 
     /**
      * PJSIP callback for incoming calls
@@ -152,6 +154,9 @@ private:
     
     QString lastSoundInputString_, lastSoundOutputString_;
     int defaultSoundInput_, defaultSoundOutput_;
+    
+    bool started_;
+    Transport transport_;
 };
 
 }} // phone::api::

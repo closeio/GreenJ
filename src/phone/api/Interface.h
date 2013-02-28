@@ -37,6 +37,7 @@ public:
      * Initializing the phone
      */
     virtual bool init(const Settings &settings) = 0;
+    virtual bool isInitialized() const = 0;
 
     /**
      * Registers the account

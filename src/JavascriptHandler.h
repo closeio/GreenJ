@@ -109,6 +109,8 @@ public slots:
      * @return Object with information about the registred account
      */
     QVariantMap getAccountInformation() const;
+    
+    bool initialize(const QVariantMap &settings) const;
 
     /**
      * Register client on a given host
