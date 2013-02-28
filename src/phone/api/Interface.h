@@ -39,6 +39,8 @@ public:
     virtual bool init(const Settings &settings) = 0;
     virtual bool isInitialized() const = 0;
 
+    virtual void setLogging(QString path) = 0;
+
     /**
      * Registers the account
      * @param user

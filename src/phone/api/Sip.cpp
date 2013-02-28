@@ -54,6 +54,20 @@ Sip::~Sip()
     pjsua_destroy();
 }
 
+//-----------------------------------------------------------------------------
+void Sip::setLogging(QString path) {
+    sipLogPath_ = path;
+    if (started_ && !path.isEmpty()) {
+        QByteArray pathBytes = path.toUtf8();
+        pjsua_logging_config log_cfg;
+        pjsua_logging_config_default(&log_cfg);
+        log_cfg.log_filename = pj_str(pathBytes.data());
+        log_cfg.decor |= PJ_LOG_HAS_CR;
+        pjsua_reconfigure_logging(&log_cfg);
+    }
+}
+
+//-----------------------------------------------------------------------------
 bool Sip::isInitialized() const {
     return started_;
 }
@@ -94,6 +108,9 @@ bool Sip::init(const Settings &settings)
     pjsua_conf_adjust_tx_level(0, settings.micro_level_);
     
     started_ = true;
+
+    // Easiest
+    setLogging(sipLogPath_);
     
     return true;
 }

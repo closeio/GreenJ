@@ -37,6 +37,8 @@ public:
     virtual bool isInitialized() const;
     virtual bool init(const Settings &settings);
 
+    virtual void setLogging(QString path);
+
     virtual int registerUser(const QString &user, const QString &password, const QString &domain);
     virtual bool checkAccountStatus();
     virtual void unregister();
@@ -156,6 +158,7 @@ private:
     int defaultSoundInput_, defaultSoundOutput_;
     
     bool started_;
+    QString sipLogPath_;
     Transport transport_;
 };
 
