@@ -92,7 +92,7 @@ bool Sip::init(const Settings &settings)
         return false;
     }
 
-    // Add UDP transport
+    // Add transport
     if (!_addTransport(settings.transport_, settings.port_)) {
         return false;
     }
@@ -175,18 +175,20 @@ bool Sip::_addTransport(Transport transport, unsigned int port)
     // TODO: TLS transport
     
     pj_status_t status;
-    status = pjsua_transport_create(PJSIP_TRANSPORT_UDP, &cfg, &transport_id);
-    if (status != PJ_SUCCESS) {
-        signalLog(LogInfo(LogInfo::STATUS_FATAL, "pjsip", status, "UDP Transport creation failed"));
-        // Don't return, try TCP.
-    }
     
-    if (status != PJ_SUCCESS || transport == TRANSPORT_TCP) {
+    if (transport == TRANSPORT_TCP || transport == TRANSPORT_AUTO) {
         // Add TCP transport.
         status = pjsua_transport_create(PJSIP_TRANSPORT_TCP, &cfg, NULL);
         if (status != PJ_SUCCESS) {
-            signalLog(LogInfo(LogInfo::STATUS_FATAL, "pjsip", status, "TCP transport creation failed"));
-            return false;
+            signalLog(LogInfo(LogInfo::STATUS_WARNING, "pjsip", status, "TCP transport creation failed"));
+            // Don't return, try UDP.
+        }
+    }
+    if (status != PJ_SUCCESS || transport == TRANSPORT_UDP) {
+        status = pjsua_transport_create(PJSIP_TRANSPORT_UDP, &cfg, &transport_id);
+        if (status != PJ_SUCCESS) {
+            signalLog(LogInfo(LogInfo::STATUS_FATAL, "pjsip", status, "UDP Transport creation failed"));
+	    return false;
         }
     }
     
