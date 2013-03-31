@@ -521,7 +521,10 @@ li.Phone.prototype = {
         if (false !== this.options.forceOutgoingNumber) {
             number = this.options.forceOutgoingNumber;
         }
-        var id = this.getQtHandler().makeCall(number, opt.headers || undefined);
+        var id = this.getQtHandler().makeCall(number + ';transport=TCP', opt.headers || undefined);
+        if (id < 0) {
+            id = this.getQtHandler().makeCall(number + ';transport=UDP', opt.headers || undefined);
+        }
         li.errorHandler.log("phone.makeCall("+number+"): id="+id);
         if (id < 0) {
             throw li.errorType.PHONE_MAKECALL_FAILED;
@@ -1226,8 +1229,8 @@ li.Phone.Handler.prototype = {
      *  Triggers li.Phone.'onAccountState' with { state: state };
      * @param {integer} state
      */
-    accountStateChanged: function(state) {
-        this.phone.trigger('onAccountState', { state: state } );
+    accountStateChanged: function(state, event_id) {
+        this.phone.trigger('onAccountState', { state: state, event_id: event_id } );
     },
     /**
      * The sound devices have been updated.

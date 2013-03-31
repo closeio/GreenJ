@@ -160,7 +160,18 @@ bool Sip::_initPjsua(const QString &stun, bool ice)
 
     return true;
 }
+        
+Transport Sip::getTransport() const {
+    return transport_;
+}
 
+bool Sip::deinit()
+{
+    unregister();
+    started_ = false;
+    return pjsua_destroy();
+}
+        
 //-----------------------------------------------------------------------------
 // TODO: make it nicer to switch between different transport types (UDP, TCP, TLS)
 bool Sip::_addTransport(Transport transport, unsigned int port)
@@ -179,20 +190,22 @@ bool Sip::_addTransport(Transport transport, unsigned int port)
     if (transport == TRANSPORT_TCP || transport == TRANSPORT_AUTO) {
         // Add TCP transport.
         status = pjsua_transport_create(PJSIP_TRANSPORT_TCP, &cfg, NULL);
-        if (status != PJ_SUCCESS) {
+        if (status == PJ_SUCCESS) {
+            transport_ = TRANSPORT_TCP;
+        } else {
             signalLog(LogInfo(LogInfo::STATUS_WARNING, "pjsip", status, "TCP transport creation failed"));
             // Don't return, try UDP.
         }
     }
     if (status != PJ_SUCCESS || transport == TRANSPORT_UDP) {
         status = pjsua_transport_create(PJSIP_TRANSPORT_UDP, &cfg, &transport_id);
-        if (status != PJ_SUCCESS) {
+        if (status == PJ_SUCCESS) {
+            transport_ = TRANSPORT_UDP;
+        } else {
             signalLog(LogInfo(LogInfo::STATUS_FATAL, "pjsip", status, "UDP Transport creation failed"));
-	    return false;
+            return false;
         }
     }
-    
-    transport_ = transport;
 
     /*if (cfg.port == 0) {
         pjsua_transport_info ti;
@@ -764,6 +777,7 @@ void Sip::getSoundDevices(QVariantList &device_list)
         device_info.insert("name", info.name);
         device_info.insert("input_count", info.input_count);
         device_info.insert("output_count", info.output_count);
+        device_info.insert("caps", info.caps);
         
         device_list.append(device_info);
     }

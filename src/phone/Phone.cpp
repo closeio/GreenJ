@@ -25,7 +25,7 @@ namespace phone
 const QString Phone::ERROR_FILE = "error.log";
 
 //-----------------------------------------------------------------------------
-Phone::Phone(api::Interface *api) : api_(api)
+Phone::Phone(api::Interface *api) : api_(api), event_id_(0)
 {
     connect(api_, SIGNAL(signalAccountState(const int)),
             this, SLOT(slotAccountState(const int)));
@@ -72,6 +72,19 @@ bool Phone::init(const Settings &settings)
         api_->updateSoundDevices();
         api_->selectSoundDevices();
         return true;
+    }
+    return false;
+}
+
+Transport Phone::getTransport() {
+    return api_->getTransport();
+}
+
+bool Phone::reinit(const Settings &settings, int event_id) {
+    if (event_id_ == event_id) {
+        event_id_++;
+        api_->deinit();
+        return init(settings);
     }
     return false;
 }
@@ -317,7 +330,7 @@ void Phone::slotMicroLevel(int level)
 //-----------------------------------------------------------------------------
 void Phone::slotAccountState(const int state)
 {
-    signalAccountStateChanged(state);
+    signalAccountStateChanged(state, ++event_id_);
 }
 
 //-----------------------------------------------------------------------------

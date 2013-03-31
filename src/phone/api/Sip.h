@@ -36,6 +36,7 @@ public:
 
     virtual bool isInitialized() const;
     virtual bool init(const Settings &settings);
+    virtual bool deinit();
 
     virtual void setLogging(QString path);
 
@@ -125,6 +126,8 @@ private:
      * @return true, if successful
      */
     bool _addTransport(Transport transport, unsigned int port);
+    
+    Transport getTransport() const;
 
     /**
      * PJSIP callback for incoming calls

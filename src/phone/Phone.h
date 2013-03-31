@@ -76,6 +76,9 @@ public:
      * Initialize the phone
      */
     bool init(const Settings &settings);
+    bool reinit(const Settings &settings, int event_id);
+    
+    Transport getTransport();
     
     /**
      * Set the javascript handler object
@@ -265,13 +268,14 @@ signals:
     void signalIncomingCall(Call &call);
     void signalSoundLevel(int level);
     void signalMicrophoneLevel(int level);
-    void signalAccountStateChanged(const int state);
+    void signalAccountStateChanged(const int state, const int event_id);
     void signalSoundDevicesUpdated();
 
 private:
     api::Interface *api_;
     QVector<Call*> calls_;
     QString error_msg_;
+    int event_id_;
 
     bool addToCallList(Call *call);
 };

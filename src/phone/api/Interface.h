@@ -16,12 +16,14 @@
 #include <QString>
 #include <QVariantMap>
 
+#include "../Phone.h"
+
 class LogInfo;
 
 namespace phone
 {
     class Settings;
-
+    
     namespace api
     {
 
@@ -38,6 +40,9 @@ public:
      */
     virtual bool init(const Settings &settings) = 0;
     virtual bool isInitialized() const = 0;
+    virtual bool deinit() = 0;
+    
+    virtual Transport getTransport() const = 0;
 
     virtual void setLogging(QString path) = 0;
 

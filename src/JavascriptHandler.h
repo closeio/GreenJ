@@ -71,7 +71,7 @@ public slots:
      * Send current account state
      * @param state
      */
-    void accountStateChanged(const int state) const;
+    void accountStateChanged(const int state, const int event_id) const;
     
     /*
      * Notify audio devices were updated
@@ -110,6 +110,9 @@ public slots:
      */
     QVariantMap getAccountInformation() const;
     
+    QString getTransport() const;
+    
+    bool initialize(const QVariantMap &settings, int event_id) const;
     bool initialize(const QVariantMap &settings) const;
 
     /**

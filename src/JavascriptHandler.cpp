@@ -39,16 +39,16 @@ JavascriptHandler::JavascriptHandler(Phone &phone) :
             this, SLOT(soundLevel(int)));
     connect(&phone_, SIGNAL(signalMicrophoneLevel(int)),
             this, SLOT(microphoneLevel(int)));
-    connect(&phone_, SIGNAL(signalAccountStateChanged(const int)),
-            this, SLOT(accountStateChanged(const int)));
+    connect(&phone_, SIGNAL(signalAccountStateChanged(const int, const int)),
+            this, SLOT(accountStateChanged(const int, const int)));
     connect(&phone_, SIGNAL(signalSoundDevicesUpdated()),
             this, SLOT(soundDevicesUpdated()));
 }
 
 //-----------------------------------------------------------------------------
-void JavascriptHandler::accountStateChanged(const int state) const
+void JavascriptHandler::accountStateChanged(const int state, const int event_id) const
 {
-    evaluateJavaScript("accountStateChanged(" + QString::number(state) + ")");
+    evaluateJavaScript("accountStateChanged(" + QString::number(state) + ", " + QString::number(event_id) + ")");
 }
 
 //-----------------------------------------------------------------------------
@@ -110,7 +110,7 @@ QVariantMap JavascriptHandler::getAccountInformation() const
     return phone_.getAccountInfo();
 }
 
-bool JavascriptHandler::initialize(const QVariantMap &settings) const
+bool JavascriptHandler::initialize(const QVariantMap &settings, int event_id) const
 {
     phone::Settings phoneSettings;
     
@@ -130,7 +130,28 @@ bool JavascriptHandler::initialize(const QVariantMap &settings) const
     phoneSettings.sound_level_ = 1.0f;
     phoneSettings.micro_level_ = 1.0f;
     
-    return phone_.init(phoneSettings);
+    if (event_id) {
+        // This initialize is in response to an event ID. It will only be executed once.
+        return phone_.reinit(phoneSettings, event_id);
+    } else {
+        return phone_.init(phoneSettings);
+    }
+}
+
+bool JavascriptHandler::initialize(const QVariantMap &settings) const {
+    return initialize(settings, false);
+}
+
+QString JavascriptHandler::getTransport() const {
+    phone::Transport t = phone_.getTransport();
+    if (t == phone::TRANSPORT_AUTO) {
+        return "auto";
+    } else if (t == phone::TRANSPORT_TCP) {
+        return "tcp";
+    } else if (t == phone::TRANSPORT_UDP) {
+        return "udp";
+    }
+    return "";
 }
 
 //-----------------------------------------------------------------------------
