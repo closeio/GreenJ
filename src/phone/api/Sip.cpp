@@ -46,6 +46,7 @@ Sip::Sip()
     defaultSoundInput_ = -1;
     defaultSoundOutput_ = -1;
     started_ = false;
+    setupLogging_ = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -61,9 +62,14 @@ void Sip::setLogging(QString path) {
         QByteArray pathBytes = path.toUtf8();
         pjsua_logging_config log_cfg;
         pjsua_logging_config_default(&log_cfg);
+        if (setupLogging_) {
+            // Only overwrite the log when we set up logging the first time.
+            log_cfg.log_file_flags = PJ_O_APPEND;
+        }
         log_cfg.log_filename = pj_str(pathBytes.data());
         log_cfg.decor |= PJ_LOG_HAS_CR;
         pjsua_reconfigure_logging(&log_cfg);
+        setupLogging_ = true;
     }
 }
 

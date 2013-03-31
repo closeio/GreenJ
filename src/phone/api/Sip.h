@@ -107,6 +107,8 @@ private:
      * Pointer to the instance for using static methods
      */
     static Sip *self_;
+    
+    bool setupLogging_;
 
     /**
      * AccountID we got from our registration
