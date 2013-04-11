@@ -88,7 +88,9 @@ public:
     
     virtual void setDefaultSoundDevice(const int input, const int output);
     virtual bool setSoundDevice(const int input, const int output);
+    virtual bool setSoundDevice(const int input, const int output, const int ring);
     virtual void getSoundDevices(QVariantList &device_list);
+    virtual void setSoundDeviceStrings(const QString input, const QString output, const QString ring);
     
     virtual bool sendDTMFDigits(int call_id, const QString &digits);
 
@@ -159,7 +161,8 @@ private:
      */
     static void registerStateCb(pjsua_acc_id acc);
     
-    QString lastSoundInputString_, lastSoundOutputString_;
+    QString soundInputString_, soundOutputString_, ringOutputString_;
+    
     int defaultSoundInput_, defaultSoundOutput_;
     
     bool started_;

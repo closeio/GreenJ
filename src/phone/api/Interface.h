@@ -180,12 +180,15 @@ public:
      * @param output Device ID of the playback device.
      */
     virtual bool setSoundDevice(const int input, const int output) = 0;
+    virtual bool setSoundDevice(const int input, const int output, const int ring) = 0;
     
     /**
      * Return a list of all available sound devices
      * @return list of QVariantMaps with device information
      */
     virtual void getSoundDevices(QVariantList &device_list) = 0;
+    
+    virtual void setSoundDeviceStrings(const QString input, const QString output, const QString ring) = 0;
 
     /**
      * Return all codecs and priorities

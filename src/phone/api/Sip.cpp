@@ -12,6 +12,7 @@
 #include "../../LogHandler.h"
 #include "../Phone.h"
 #include "Sip.h"
+#include "Sound.h"
 
 // From QTextDocument
 QString escape(const QString& plain)
@@ -704,35 +705,34 @@ void Sip::setDefaultSoundDevice(const int input, const int output) {
     defaultSoundOutput_ = output;
 }
 
+void Sip::setSoundDeviceStrings(const QString input, const QString output, const QString ring) {
+    soundInputString_ = input;
+    soundOutputString_ = output;
+    ringOutputString_ = ring;
+    selectSoundDevices();
+}
+        
 //-----------------------------------------------------------------------------
 bool Sip::setSoundDevice(const int input, const int output) {
     if (!started_) { return false; }
-
-    pj_status_t status = pjsua_set_snd_dev(
-            input == -1 ? defaultSoundInput_ : input,
-            output == -1 ? defaultSoundOutput_ : output);
     
-    if (status == PJ_SUCCESS) {
-        pjmedia_aud_dev_info info;
-        
-        if (input != -1) {
-            status = pjmedia_aud_dev_get_info(input, &info);
-            
-            if (status == PJ_SUCCESS) {
-                lastSoundInputString_ = info.name;
-            }
-        }
-        
-        if (output != -1) {
-            status = pjmedia_aud_dev_get_info(output, &info);
-            
-            if (status == PJ_SUCCESS) {
-                lastSoundOutputString_ = info.name;
-            }
-        }
-    }
+    pj_status_t status = pjsua_set_snd_dev(
+                                           input == -1 ? defaultSoundInput_ : input,
+                                           output == -1 ? defaultSoundOutput_ : output);
     
     return (status == PJ_SUCCESS);
+}
+
+
+//-----------------------------------------------------------------------------
+bool Sip::setSoundDevice(const int input, const int output, const int ring) {
+    if (!started_) { return false; }
+    
+    bool ret = setSoundDevice(input, output);
+
+    Sound::getInstance().setSoundDevice(ring == -1 ? defaultSoundOutput_ : ring);
+    
+    return ret;
 }
 
 //-----------------------------------------------------------------------------
@@ -742,7 +742,8 @@ bool Sip::selectSoundDevices() {
     unsigned dev_count = pjmedia_aud_dev_count();
     pj_status_t status;
     int input = -1,
-        output = -1;
+        output = -1,
+        ring = -1;
     
     for (unsigned i=0; i<dev_count; ++i) {
         pjmedia_aud_dev_info info;
@@ -752,15 +753,18 @@ bool Sip::selectSoundDevices() {
         if (status != PJ_SUCCESS)
             continue;
         
-        if (info.input_count > 0 && lastSoundInputString_ == info.name) {
+        if (info.input_count > 0 && soundInputString_ == info.name) {
             input = i;
         }
-        if (info.output_count > 0 && lastSoundOutputString_ == info.name) {
+        if (info.output_count > 0 && soundOutputString_ == info.name) {
             output = i;
+        }
+        if (info.output_count > 0 && ringOutputString_ == info.name) {
+            ring = i;
         }
     }
 
-    return setSoundDevice(input, output);
+    return setSoundDevice(input, output, ring);
 }
 
 //-----------------------------------------------------------------------------
@@ -768,6 +772,18 @@ void Sip::getSoundDevices(QVariantList &device_list)
 {
     unsigned dev_count = pjmedia_aud_dev_count();
     pj_status_t status;
+    
+#ifdef Q_WS_MAC
+    QVariantMap device_info;
+
+    device_info.insert("index", -1);
+    device_info.insert("name", "System default");
+    device_info.insert("input_count", 1);
+    device_info.insert("output_count", 1);
+    device_info.insert("caps", 0);
+
+    device_list.append(device_info);
+#endif
     
     for (unsigned i=0; i<dev_count; ++i) {
         QVariantMap device_info;
@@ -780,7 +796,15 @@ void Sip::getSoundDevices(QVariantList &device_list)
             continue;
 
         device_info.insert("index", i);
+#ifdef Q_WS_WIN
+        if (info.name == "Wave mapper") {
+            device_info.insert("name", "System default");
+        } else {
+            device_info.insert("name", info.name);
+        }
+#else
         device_info.insert("name", info.name);
+#endif
         device_info.insert("input_count", info.input_count);
         device_info.insert("output_count", info.output_count);
         device_info.insert("caps", info.caps);

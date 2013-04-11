@@ -466,6 +466,13 @@ void JavascriptHandler::setSoundDevice(const int input, const int output, const 
     Sound::getInstance().setSoundDevice(ring);
 }
 
+void JavascriptHandler::setSoundSettings(const QVariantMap &map) const {
+    phone_.setSoundDeviceStrings(map["soundInput"].toString(),
+                                 map["soundOutput"].toString(),
+                                 map["ringtoneOutput"].toString());
+}
+
+
 //-----------------------------------------------------------------------------
 QVariantList JavascriptHandler::getSoundDevices() const
 {
