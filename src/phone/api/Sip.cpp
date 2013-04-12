@@ -705,11 +705,11 @@ void Sip::setDefaultSoundDevice(const int input, const int output) {
     defaultSoundOutput_ = output;
 }
 
-void Sip::setSoundDeviceStrings(const QString input, const QString output, const QString ring) {
+bool Sip::setSoundDeviceStrings(const QString input, const QString output, const QString ring) {
     soundInputString_ = input;
     soundOutputString_ = output;
     ringOutputString_ = ring;
-    selectSoundDevices();
+    return selectSoundDevices();
 }
         
 //-----------------------------------------------------------------------------

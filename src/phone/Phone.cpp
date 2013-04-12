@@ -255,9 +255,9 @@ void Phone::setSoundDevice(const int input, const int output)
 }
     
 //-----------------------------------------------------------------------------
-void Phone::setSoundDeviceStrings(const QString input, const QString output, const QString ring)
+bool Phone::setSoundDeviceStrings(const QString input, const QString output, const QString ring)
 {
-    api_->setSoundDeviceStrings(input, output, ring);
+    return api_->setSoundDeviceStrings(input, output, ring);
 }
 
 //-----------------------------------------------------------------------------

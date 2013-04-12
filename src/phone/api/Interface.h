@@ -188,7 +188,7 @@ public:
      */
     virtual void getSoundDevices(QVariantList &device_list) = 0;
     
-    virtual void setSoundDeviceStrings(const QString input, const QString output, const QString ring) = 0;
+    virtual bool setSoundDeviceStrings(const QString input, const QString output, const QString ring) = 0;
 
     /**
      * Return all codecs and priorities

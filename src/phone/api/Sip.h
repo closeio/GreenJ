@@ -90,7 +90,7 @@ public:
     virtual bool setSoundDevice(const int input, const int output);
     virtual bool setSoundDevice(const int input, const int output, const int ring);
     virtual void getSoundDevices(QVariantList &device_list);
-    virtual void setSoundDeviceStrings(const QString input, const QString output, const QString ring);
+    virtual bool setSoundDeviceStrings(const QString input, const QString output, const QString ring);
     
     virtual bool sendDTMFDigits(int call_id, const QString &digits);
 

@@ -182,7 +182,7 @@ public:
      */
     void setSoundDevice(const int input, const int output);
     
-    void setSoundDeviceStrings(const QString input, const QString output, const QString ring);
+    bool setSoundDeviceStrings(const QString input, const QString output, const QString ring);
     
     /**
      * Return a list of all available sound devices
