@@ -797,7 +797,7 @@ void Sip::getSoundDevices(QVariantList &device_list)
 
         device_info.insert("index", i);
 #ifdef Q_WS_WIN
-        if (info.name == "Wave mapper") {
+        if (QString(info.name) == "Wave mapper") {
             device_info.insert("name", "System default");
         } else {
             device_info.insert("name", info.name);

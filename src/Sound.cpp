@@ -72,7 +72,7 @@ void Sound::startRing()
         
         if (!snd_port_) {
             status = pjmedia_snd_port_create_player(pool_, /* pool */
-                                                    device_, /* use default dev. */
+                                                    device_,
                                                     file_port_->info.clock_rate,/* clock rate. */
                                                     file_port_->info.channel_count,/* # of channels. */
                                                     file_port_->info.samples_per_frame, /* samples per frame. */
