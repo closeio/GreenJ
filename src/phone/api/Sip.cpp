@@ -720,6 +720,7 @@ bool Sip::setSoundDevice(const int input, const int output) {
                                            input == -1 ? defaultSoundInput_ : input,
                                            output == -1 ? defaultSoundOutput_ : output);
     
+    signalSoundDeviceChanged();
     return (status == PJ_SUCCESS);
 }
 

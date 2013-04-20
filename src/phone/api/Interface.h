@@ -267,6 +267,7 @@ signals:
      */
     void signalSoundDevicesUpdated();
 
+    void signalSoundDeviceChanged();
 };
 
 }} // phone::api::
