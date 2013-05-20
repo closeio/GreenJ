@@ -48,6 +48,7 @@ Sip::Sip()
     defaultSoundOutput_ = -1;
     started_ = false;
     setupLogging_ = false;
+    sipLogPath_ = "";
 }
 
 //-----------------------------------------------------------------------------
