@@ -442,6 +442,8 @@ int Sip::makeCall(const QString &url)
 //-----------------------------------------------------------------------------
 int Sip::makeCall(const QString &url, const QVariantMap &header_map)
 {
+    if (!started_) { return -1; }
+
     if (url.size() > 149) {
         signalLog(LogInfo(LogInfo::STATUS_ERROR, "pjsip", 0, "Error making call: url too long"));
         return -1;
