@@ -132,6 +132,8 @@ bool Sip::_initPjsua(const QString &stun, bool ice)
     pjsua_config_default(&cfg);
     pjsua_media_config_default(&media_cfg);
     
+    media_cfg.ec_options = PJMEDIA_ECHO_SPEEX;
+    
     media_cfg.enable_ice = ice;
 
     media_cfg.snd_clock_rate = 8000; // Fix problems with audio tag in WebViews the Mac
