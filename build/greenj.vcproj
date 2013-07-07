@@ -243,7 +243,7 @@
 			Filter="cpp;c;cxx;moc;h;def;odl;idl;res;"
 			UniqueIdentifier="{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}">
 			<File
-				RelativePath="c:\Users\tom\dev\closeio-cocoa\GreenJ\bin\win32\greenj.res" />
+				RelativePath="c:\Users\tom\dev\closeio-native\GreenJ\bin\win32\greenj.res" />
 			<File
 				RelativePath="..\src\GeneratedFiles\debug\moc_Interface.cpp">
 				<FileConfiguration

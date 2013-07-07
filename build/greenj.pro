@@ -29,7 +29,7 @@ mac {
 	LIBDIR = ../lib/mac
 	BUILDDIR = ../build/mac
 	PJSIP_DIR = ../lib/mac
-	PJSIP_TARGET = i386-apple-darwin12.2.0
+	PJSIP_TARGET = i386-apple-darwin12.3.0
 	CONFIG += x86 x86_64
 }
 SOURCEDIR = ../src
