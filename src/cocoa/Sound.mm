@@ -13,45 +13,11 @@
 #import <CoreAudio/CoreAudio.h>
 
 #include <QFile>
+
+#include "Devices.h"
 #include "Config.h"
 #include "Sound.h"
 #include "LogHandler.h"
-
-
-// Gets audio devices data.
-static OSStatus GetAudioDevices(Ptr *devices, UInt16 *devicesCount) {
-    OSStatus err = noErr;
-    UInt32 size;
-    Boolean isWritable;
-    
-    // Get sound devices count.
-    err = AudioHardwareGetPropertyInfo(kAudioHardwarePropertyDevices,
-                                       &size,
-                                       &isWritable);
-    if (err != noErr) {
-        return err;
-    }
-    
-    *devicesCount = size / sizeof(AudioDeviceID);
-    if (*devicesCount < 1) {
-        return err;
-    }
-    
-    // Allocate space for devices.
-    *devices = (Ptr)malloc(size);
-    memset(*devices, 0, size);
-    
-    // Get the data.
-    err = AudioHardwareGetProperty(kAudioHardwarePropertyDevices,
-                                   &size,
-                                   (void *)*devices);
-    if (err != noErr) {
-        return err;
-    }
-    
-    return err;
-}
-
 
 
 //-----------------------------------------------------------------------------
@@ -108,17 +74,17 @@ void Sound::setSoundDevice(const int device)
 
         // Fetch a pointer to the list of available devices.
         AudioDeviceID *devices = NULL;
-        UInt16 devicesCount = 0;
-        err = GetAudioDevices((Ptr *)&devices, &devicesCount);
+        unsigned devicesCount = 0;
+        err = GetAudioDevices(&devices, &devicesCount);
         if (err != noErr) {
             return;
         }
         
-        if (device < 0 || device >= devicesCount) {
+        if (device < 0 || device >= (int)devicesCount) {
             return;
         }
         
-        // Portaudio fetches devices in the same order as OS X returns them, so we can look it up directly.
+        // PJSIP fetches devices in the same order as GetAudioDevices returns them, so we can look it up directly.
         
         // Get device UID.
         CFStringRef UIDStringRef = NULL;
@@ -133,6 +99,8 @@ void Sound::setSoundDevice(const int device)
             [sound_ setPlaybackDeviceIdentifier:(NSString *)UIDStringRef];
             CFRelease(UIDStringRef);
         }
+        
+        free(devices);
     }
 }
 

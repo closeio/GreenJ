@@ -29,8 +29,16 @@ mac {
 	LIBDIR = ../lib/mac
 	BUILDDIR = ../build/mac
 	PJSIP_DIR = ../lib/mac
-	PJSIP_TARGET = i386-apple-darwin12.3.0
+	PJSIP_TARGET = x86_64-apple-darwin13.0.0
 	CONFIG += x86 x86_64
+
+	# $(xcodebuild -version -sdk macosx10.8 Path)
+	QMAKE_MAC_SDK = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk
+
+	# TODO: figure out why QMAKE_COMP_QMAKE_OBJECTIVE_CFLAGS is set to 10.8 still.
+	MACOSX_DEPLOYMENT_TARGET = 10.6
+
+	INCLUDEPATH += /usr/local/include/
 }
 SOURCEDIR = ../src
 VENDORDIR = ../vendor
@@ -152,7 +160,7 @@ SOURCES += $$SOURCEDIR/phone/api/Sip.cpp \
     $$SOURCEDIR/JavascriptHandler.cpp \
     $$SOURCEDIR/LogHandler.cpp \
     $$VENDORDIR/qt-json/json.cpp
-mac: OBJECTIVE_SOURCES += $$SOURCEDIR/cocoa/Sound.mm
+mac: OBJECTIVE_SOURCES += $$SOURCEDIR/cocoa/Sound.mm $$SOURCEDIR/cocoa/Devices.m
 !mac: SOURCES += $$SOURCEDIR/Sound.cpp
 FORMS += $$SOURCEDIR/gui.ui
 RESOURCES += $$RESOURCEDIR/gui.qrc
