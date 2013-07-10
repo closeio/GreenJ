@@ -68,15 +68,16 @@ void Sound::startRing()
             LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_ERROR, "pjsip", status, "Error in pjmedia_wav_player_port_create"));
             return;
         }
+
         
         
         if (!snd_port_) {
             status = pjmedia_snd_port_create_player(pool_, /* pool */
                                                     device_,
-                                                    file_port_->info.clock_rate,/* clock rate. */
-                                                    file_port_->info.channel_count,/* # of channels. */
-                                                    file_port_->info.samples_per_frame, /* samples per frame. */
-                                                    file_port_->info.bits_per_sample,/* bits per sample. */
+                                                    PJMEDIA_PIA_SRATE(&file_port_->info),/* clock rate. */
+                                                    PJMEDIA_PIA_CCNT(&file_port_->info),/* # of channels. */
+                                                    PJMEDIA_PIA_SPF(&file_port_->info), /* samples per frame. */
+                                                    PJMEDIA_PIA_BITS(&file_port_->info),/* bits per sample. */
                                                     0, /* options */
                                                     &snd_port_ /* returned port */
                                                     );
@@ -85,7 +86,6 @@ void Sound::startRing()
                 return;
             }
         }
-        
         
         status = pjmedia_snd_port_connect(snd_port_, file_port_);
         if (status != PJ_SUCCESS) {
