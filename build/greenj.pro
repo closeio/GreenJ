@@ -29,11 +29,8 @@ mac {
 	LIBDIR = ../lib/mac
 	BUILDDIR = ../build/mac
 	PJSIP_DIR = ../lib/mac
-	PJSIP_TARGET = x86_64-apple-darwin13.0.0
-	CONFIG += x86 x86_64
-
-	# $(xcodebuild -version -sdk macosx10.8 Path)
-	QMAKE_MAC_SDK = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk
+	PJSIP_TARGET = x86_64-apple-darwin13.0.2
+	CONFIG += x86_64
 
 	# TODO: figure out why QMAKE_COMP_QMAKE_OBJECTIVE_CFLAGS is set to 10.8 still.
 	MACOSX_DEPLOYMENT_TARGET = 10.6
