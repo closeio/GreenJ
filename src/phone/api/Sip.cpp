@@ -49,6 +49,7 @@ Sip::Sip()
     started_ = false;
     setupLogging_ = false;
     sipLogPath_ = "";
+    account_id_ = -1;
 }
 
 //-----------------------------------------------------------------------------
@@ -84,8 +85,7 @@ bool Sip::isInitialized() const {
 bool Sip::init(const Settings &settings)
 {
     if (started_) {
-        signalLog(LogInfo(LogInfo::STATUS_FATAL, "pjsip", 0, "Already initialized"));
-        return false;
+        return true;
     }
 
     // Create pjsua first
@@ -239,7 +239,7 @@ int Sip::registerUser(const QString &user, const QString &password, const QStrin
     
     if (pjsua_acc_is_valid(account_id_)) {
         signalLog(LogInfo(LogInfo::STATUS_WARNING, "pjsip", 0, "Account already exists"));
-        return -1;
+        return -2;
     }
 
     QString id = "sip:" + user + "@" + domain;
@@ -256,7 +256,7 @@ int Sip::registerUser(const QString &user, const QString &password, const QStrin
         || domain.size() > 99)
     {
         signalLog(LogInfo(LogInfo::STATUS_ERROR, "pjsip", 0, "Error adding account: Invalid data"));
-        return -1;
+        return -3;
     }
 
     char cid[150], curi[100], cuser[100], cpassword[100], cdomain[100];
@@ -284,7 +284,7 @@ int Sip::registerUser(const QString &user, const QString &password, const QStrin
     pj_status_t status = pjsua_acc_add(&cfg, PJ_TRUE, &account_id_);
     if (status != PJ_SUCCESS) {
         signalLog(LogInfo(LogInfo::STATUS_ERROR, "pjsip", status, "Error adding account"));
-        return -1;
+        return -4;
     }
     signalLog(LogInfo(LogInfo::STATUS_MESSAGE, "pjsip", 0, 
                       "Registering user with account-id " + QString::number(account_id_)));
@@ -606,12 +606,13 @@ void Sip::getCallInfo(const int call_id, QVariantMap &call_info)
 {
     pjsua_call_info ci;
     pjsua_call_get_info(call_id, &ci);
-
-    call_info.insert("address", escape(ci.remote_contact.ptr));
-    call_info.insert("number", escape(ci.remote_info.ptr));
-    call_info.insert("stateText", escape(ci.state_text.ptr));
+    
+    call_info.insert("id", call_id);
+    call_info.insert("address", ci.remote_contact.ptr);
+    call_info.insert("number", ci.remote_info.ptr);
+    call_info.insert("stateText", ci.state_text.ptr);
     call_info.insert("state", (int)ci.state);
-    call_info.insert("lastStatus", escape(ci.last_status_text.ptr));
+    call_info.insert("lastStatus", ci.last_status_text.ptr);
     call_info.insert("duration", (int)ci.connect_duration.sec);
 }
 
@@ -677,6 +678,8 @@ void Sip::setCodecPriority(const QString &codec, int new_priority)
 {
     pj_str_t id;
     pj_status_t status;
+    
+    if (!started_) { return; }
 
     if (new_priority < 0) {
         new_priority = 0;
@@ -695,6 +698,8 @@ void Sip::getCodecPriorities(QVariantMap &codecs)
 {
     pjsua_codec_info codec[32];
     unsigned i, codec_count = PJ_ARRAY_SIZE(codec);
+    
+    if (!started_) { return; }
 
     pjsua_enum_codecs(codec, &codec_count);
     for (i=0; i < codec_count; i++) {

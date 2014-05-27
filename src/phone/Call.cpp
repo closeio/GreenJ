@@ -19,9 +19,9 @@ namespace phone
 {
 
 //-----------------------------------------------------------------------------
-Call::Call(Phone *phone, const Type type, const Status status) :
-    phone_(phone), 
-    type_(type), status_(status), active_(false),
+Call::Call(api::Sip *sip, const Type type, const Status status) :
+    sip_(sip),
+    type_(type), status_(status), active_(true),
     id_(-1), call_state_(0), media_state_(0),
     start_time_(QDateTime::currentDateTime()),
     dump_("")
@@ -32,8 +32,7 @@ Call::Call(Phone *phone, const Type type, const Status status) :
 int Call::makeCall(const QString &url)
 {
     url_ = url;
-    id_ = phone_->getApi()->makeCall(url_);
-    active_ = true;
+    id_ = sip_->makeCall(url_);
 
     if (id_ >= 0) {
         Sound::getInstance().startDial();
@@ -45,8 +44,7 @@ int Call::makeCall(const QString &url)
 int Call::makeCall(const QString &url, const QVariantMap &header_map)
 {
     url_ = url;
-    id_ = phone_->getApi()->makeCall(url_, header_map);
-    active_ = true;
+    id_ = sip_->makeCall(url_, header_map);
     
     setHeaders(header_map);
     
@@ -61,7 +59,7 @@ int Call::makeCall(const QString &url, const QVariantMap &header_map)
 void Call::answerCall(const int code) const
 {
     if (id_ != -1) {
-        phone_->getApi()->answerCall(id_, code);
+        sip_->answerCall(id_, code);
     }
 }
 
@@ -69,7 +67,7 @@ void Call::answerCall(const int code) const
 void Call::hangUp()
 {
     if (id_ != -1) {
-        phone_->getApi()->hangUp(id_);
+        sip_->hangUp(id_);
     }
     setInactive();
 }
@@ -77,38 +75,40 @@ void Call::hangUp()
 //-----------------------------------------------------------------------------
 bool Call::addToConference(const Call &call_dest) const
 {
-    return phone_->getApi()->addCallToConference(id_, call_dest.getId());
+    return sip_->addCallToConference(id_, call_dest.getId());
 }
 
 //-----------------------------------------------------------------------------
 bool Call::removeFromConference(const Call &call_dest) const
 {
-    return phone_->getApi()->removeCallFromConference(id_, call_dest.getId());
+    return sip_->removeCallFromConference(id_, call_dest.getId());
 }
 
 //-----------------------------------------------------------------------------
 int Call::redirect(const QString &dest_uri) const
 {
-    return phone_->getApi()->redirectCall(id_, dest_uri);
+    return sip_->redirectCall(id_, dest_uri);
 }
 
 //-----------------------------------------------------------------------------
 QVariantMap Call::getInfo() const
 {
     QVariantMap info;
-    if (phone_) {
-        phone_->getApi()->getCallInfo(id_, info);
+    if (sip_) {
+        sip_->getCallInfo(id_, info);
     } else {
         info.insert("number", url_);
         info.insert("duration", duration_);
     }
     info.insert("id", id_);
     info.insert("name", name_);
+    info.insert("active", active_);
     info.insert("type", (int)type_);
     info.insert("status", (int)status_);
-    info.insert("callTime", (qint64)start_time_.toTime_t() * 1000 + (qint64)start_time_.time().msec());
-    info.insert("acceptTime", accept_time_.isValid() ? (qint64)accept_time_.toTime_t() * 1000 + (qint64)accept_time_.time().msec() : 0);
-    info.insert("closeTime", close_time_.isValid() ? (qint64)close_time_.toTime_t() * 1000 + (qint64)close_time_.time().msec() : 0);
+    // Needs conversion to string because we can't convert longlong
+    info.insert("callTime", QString::number(start_time_.toTime_t() * 1000 + (qint64)start_time_.time().msec()));
+    info.insert("acceptTime", QString::number(accept_time_.isValid() ? (qint64)accept_time_.toTime_t() * 1000 + (qint64)accept_time_.time().msec() : 0));
+    info.insert("closeTime", QString::number(close_time_.isValid() ? (qint64)close_time_.toTime_t() * 1000 + (qint64)close_time_.time().msec() : 0));
     info.insert("userData", user_data_);
     info.insert("headers", headers_);
     return info;
@@ -211,21 +211,14 @@ void Call::setId(const int call_id)
 }
 
 //-----------------------------------------------------------------------------
-void Call::setActive()
-{
-    active_ = true;
-    accept_time_ = QDateTime::currentDateTime();
-}
-
-//-----------------------------------------------------------------------------
 void Call::setInactive()
 {
-    LogHandler::getInstance().log(LogInfo(LogInfo::STATUS_DEBUG, "call", 0, "set call inactive"));
-
-    active_ = false;
-    close_time_ = QDateTime::currentDateTime();
-    QDateTime stop_time = QDateTime::currentDateTime();
-    duration_ = start_time_.secsTo(stop_time);
+    if (active_) {
+        active_ = false;
+        close_time_ = QDateTime::currentDateTime();
+        QDateTime stop_time = QDateTime::currentDateTime();
+        duration_ = start_time_.secsTo(stop_time);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -239,10 +232,10 @@ void Call::setState(const int state)
             break;
         case 5:
             status_ = Call::STATUS_ACCEPTED;
-            setActive();
+            accept_time_ = QDateTime::currentDateTime();
             break;
         case 6:
-            active_ = false;
+            setInactive();
             status_ = Call::STATUS_CLOSED;
             break;
     }
@@ -257,20 +250,20 @@ void Call::setMediaState(const int state)
 //-----------------------------------------------------------------------------
 void Call::setSoundSignal(const float soundLevel)
 {
-    phone_->getApi()->setSoundSignal(soundLevel, id_);
+    sip_->setSoundSignal(soundLevel, id_);
 }
 
 //-----------------------------------------------------------------------------
 void Call::setMicroSignal(const float microLevel)
 {
-    phone_->getApi()->setMicroSignal(microLevel, id_);
+    sip_->setMicroSignal(microLevel, id_);
 }
 
 //-----------------------------------------------------------------------------
 QVariantMap Call::getSignalLevels() const
 {
     QVariantMap info;
-    phone_->getApi()->getSignalLevels(info, id_);
+    sip_->getSignalLevels(info, id_);
     return info;
 }
     
@@ -280,7 +273,7 @@ void Call::setDump(const QString dump) {
 
 QString Call::getDump() {
     if (status_ != Call::STATUS_CLOSED) {
-        const QString dump = phone_->getApi()->getCallDump(id_);
+        const QString dump = sip_->getCallDump(id_);
         if (dump != "")
             dump_ = dump;
     }
@@ -325,7 +318,7 @@ void Call::setHeaders(const QVariantMap &header_map)
     
 bool Call::sendDTMFDigits(const QString &digits)
 {
-    return phone_->getApi()->sendDTMFDigits(id_, digits);
+    return sip_->sendDTMFDigits(id_, digits);
 }
 
 

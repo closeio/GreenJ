@@ -142,9 +142,9 @@ HEADERS += $$SOURCEDIR/phone/api/Interface.h \
     $$SOURCEDIR/phone/api/Sip.h \
     $$SOURCEDIR/phone/Account.h \
     $$SOURCEDIR/phone/Call.h \
-    $$SOURCEDIR/phone/Phone.h \
+    #$$SOURCEDIR/phone/Phone.h \
     $$SOURCEDIR/Config.h \
-    $$SOURCEDIR/JavascriptHandler.h \
+    #$$SOURCEDIR/JavascriptHandler.h \
     $$SOURCEDIR/LogHandler.h \ 
     $$SOURCEDIR/WebPage.h
 mac: HEADERS += $$SOURCEDIR/cocoa/Sound.h
@@ -152,9 +152,9 @@ mac: HEADERS += $$SOURCEDIR/cocoa/Sound.h
 SOURCES += $$SOURCEDIR/phone/api/Sip.cpp \
     $$SOURCEDIR/phone/Account.cpp \
     $$SOURCEDIR/phone/Call.cpp \
-    $$SOURCEDIR/phone/Phone.cpp \
+    #$$SOURCEDIR/phone/Phone.cpp \
     $$SOURCEDIR/Config.cpp \
-    $$SOURCEDIR/JavascriptHandler.cpp \
+    #$$SOURCEDIR/JavascriptHandler.cpp \
     $$SOURCEDIR/LogHandler.cpp \
     $$VENDORDIR/qt-json/json.cpp
 mac: OBJECTIVE_SOURCES += $$SOURCEDIR/cocoa/Sound.mm $$SOURCEDIR/cocoa/Devices.m

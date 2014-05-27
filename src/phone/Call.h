@@ -17,6 +17,8 @@
 #include <QVariantMap>
 #include <QDataStream>
 
+#include "api/Sip.h"
+
 namespace phone
 {
 
@@ -63,7 +65,7 @@ public:
      * @param type Call type
      * @param status Call status
      */
-    Call(Phone *phone_, const Type type = TYPE_UNKNOWN,
+    Call(api::Sip *sip_, const Type type = TYPE_UNKNOWN,
          const Status status = STATUS_UNKNOWN);
 
     /**
@@ -211,7 +213,7 @@ public:
     /**
      * Set call as active
      */
-    void setActive();
+//    void setActive();
 
     /**
      * Set call as inactive
@@ -285,7 +287,9 @@ private:
     QDateTime close_time_;
     int duration_;
 
-    Phone *phone_;
+    api::Sip *sip_;
+//    Phone *phone_;
+    
 
     int type_;
     int status_;

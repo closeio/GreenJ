@@ -149,7 +149,7 @@ bool Phone::addToCallList(Call *call)
 //-----------------------------------------------------------------------------
 Call *Phone::makeCall(const QString &url)
 {
-    Call *call = new Call(this, Call::TYPE_OUTGOING);
+    Call *call = new Call(api_, Call::TYPE_OUTGOING);
     if (call->makeCall(url) < 0 || !addToCallList(call)) {
         delete call;
         call = NULL;
@@ -160,7 +160,7 @@ Call *Phone::makeCall(const QString &url)
 //-----------------------------------------------------------------------------
 Call *Phone::makeCall(const QString &url, const QVariantMap &header_map)
 {
-    Call *call = new Call(this, Call::TYPE_OUTGOING);
+    Call *call = new Call(api_, Call::TYPE_OUTGOING);
     if (call->makeCall(url, header_map) < 0 || !addToCallList(call)) {
         delete call;
         call = NULL;
@@ -285,7 +285,7 @@ void Phone::unregister()
 //-----------------------------------------------------------------------------
 void Phone::slotIncomingCall(int call_id, const QString &url, const QString &name, const QVariantMap &header_map)
 {
-    Call *call = new Call(this, Call::TYPE_INCOMING);
+    Call *call = new Call(api_, Call::TYPE_INCOMING);
     call->setId(call_id);
     call->setUrl(url);
     call->setName(name);
