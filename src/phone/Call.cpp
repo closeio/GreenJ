@@ -111,6 +111,7 @@ QVariantMap Call::getInfo() const
     info.insert("closeTime", QString::number(close_time_.isValid() ? (qint64)close_time_.toTime_t() * 1000 + (qint64)close_time_.time().msec() : 0));
     info.insert("userData", user_data_);
     info.insert("headers", headers_);
+    info.insert("dump", dump_);
     return info;
 }
 

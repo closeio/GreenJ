@@ -382,10 +382,9 @@ void Sip::callStateCb(pjsua_call_id call_id, pjsip_event *e)
         self_->signalStopSound();
     }
     if (ci.state == PJSIP_INV_STATE_DISCONNECTED) {
-        // Get a call dump now before we hang up.
+        // Get a call dump now before we hang up and leave the callback.
         const QString dump = self_->getCallDump(call_id);
         self_->signalCallDump(call_id, dump);
-
         self_->hangUp(call_id);
     }
 
